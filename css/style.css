@@ -302,7 +302,7 @@ dl{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:.95rem;margin-t
 .cnote{font:800 .72rem var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--barn);margin:0 0 4px}
 /* visible smoke + taller first rail */
 .train{overflow:visible}
-.train .smoke circle{fill:#cfc6b2;stroke:#a89d86;stroke-width:1}
+.train .smoke circle{fill:#fff;stroke:none}
 .rail.tall{height:150px;background:linear-gradient(180deg,var(--cream) calc(100% - 36px),#d9cdb0 0)}
 /* third train: rolls in and halts at the station */
 .rail.stop{margin-top:0;--st:170px}
