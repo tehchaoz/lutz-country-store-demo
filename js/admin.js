@@ -8,6 +8,7 @@
   function csvq(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
   function dayStart(t){var x=new Date(t);x.setHours(0,0,0,0);return x.getTime()}
 
+  var TLN={'':'No theme right now','fall':'Fall and Thanksgiving (leaves and a turkey on the train)','christmas':'Christmas (lights and presents on the train)','newyear':'New Year','valentines':"Valentine's Day (hearts)",'july4':'Fourth of July'};
   /* ---------- login ---------- */
   var authed=false;try{authed=sessionStorage.getItem('lc.auth')==='1'}catch(e){}
   function showApp(){$('#login').hidden=true;$('#app').hidden=false;renderAll()}
@@ -16,7 +17,6 @@
     L.checkPw($('#pw').value).then(function(ok){if(ok){try{sessionStorage.setItem('lc.auth','1')}catch(e){}$('#pw').value='';showApp()}else msg.textContent='That is not the password.'});
   });
   $('#logout').addEventListener('click',function(){try{sessionStorage.removeItem('lc.auth')}catch(e){}location.reload()});
-  if(authed)showApp();else $('#login').hidden=false;
 
   /* ---------- tabs ---------- */
   function tab(n){
@@ -269,14 +269,15 @@
   });
 
   /* ---------- site (theme, about, rewards) ---------- */
-  var TLN={'':'No theme right now','fall':'Fall and Thanksgiving (leaves and a turkey on the train)','christmas':'Christmas (lights and presents on the train)','newyear':'New Year (fireworks)','valentines':"Valentine's Day (hearts)",'july4':'Fourth of July (fireworks and bunting)'};
   function tlRow(x){return '<div class="tlrow"><input data-t="h" placeholder="Title" value="'+esc(x.h||'')+'" maxlength="60"><textarea data-t="t" rows="2" placeholder="What happened" maxlength="240">'+esc(x.t||'')+'</textarea><button type="button" class="ib" data-t="rm" aria-label="Remove milestone">×</button></div>'}
   function renderSite(){
     var s=L.settings(),a=s.about||{},f=$('#siteform').elements;
     f.theme.value=s.theme||'auto';f.loyaltyUrl.value=s.loyaltyUrl||'';f.loyaltyText.value=s.loyaltyText||'';f.aboutTitle.value=a.title||'';f.aboutBody.value=(a.body||[]).join('\n\n');
     $('#tlist').innerHTML=(a.timeline||[]).map(tlRow).join('');
-    $('#themenow').textContent='Showing on the site today: '+TLN[L.theme()];
+    $('#themenow').textContent='Showing on the site today: '+TLN[L.theme()];themeTip();
   }
+  function themeTip(){var t=$('#siteform').elements.theme,x=window.THEME_DESC[t.value]||'';t.title=x;$('#themedesc').textContent=x}
+  $('#siteform').elements.theme.addEventListener('change',function(){var s=L.settings();s.theme=this.value;themeTip();if(saved(L.saveSettings(s)))$('#themenow').textContent='Showing on the site today: '+TLN[L.theme()]});
   $('#addtl').addEventListener('click',function(){$('#tlist').insertAdjacentHTML('beforeend',tlRow({}))});
   $('#tlist').addEventListener('click',function(e){if(e.target.dataset.t==='rm')e.target.closest('.tlrow').remove()});
   $('#siteform').addEventListener('submit',function(e){
@@ -321,4 +322,5 @@
   $('#import').addEventListener('change',function(e){var fl=e.target.files[0];if(!fl)return;var r=new FileReader();r.onload=function(){try{L.importAll(r.result);$('#datamsg').textContent='Backup restored.';renderData();toast('Restored')}catch(err){$('#datamsg').textContent='That file is not a Lutz backup.'}};r.readAsText(fl);e.target.value=''});
   $('#reset').addEventListener('click',function(){if(confirm('Reset the menu to the original items from the Toast page? Your edits and photos will be removed. Orders are kept.')){L.resetMenu();renderData();$('#datamsg').textContent='Menu reset.'}});
   d.addEventListener('lc:orders',renderBadge);
+  if(authed)showApp();else $('#login').hidden=false;
 })();
