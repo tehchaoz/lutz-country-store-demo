@@ -4,7 +4,7 @@
    Menu items and prices were copied from the public Toast ordering page;
    items marked est:true have prices the owner should confirm. */
 (function(){
-  var K={items:'lc.items',cats:'lc.cats',settings:'lc.settings',orders:'lc.orders',cart:'lc.cart',pw:'lc.pw'};
+  var K={items:'lc.items',cats:'lc.cats',settings:'lc.settings',orders:'lc.orders',cart:'lc.cart',pw:'lc.pw',events:'lc.events'};
 
   var CATS=[
     {id:'breakfast',name:'Breakfast Sandwiches'},{id:'plates',name:'Breakfast Plates'},{id:'sides',name:'Sides & Bread'},
@@ -111,6 +111,16 @@
     if(/^(Latte|Mocha|Cappuccino|Americano|Cortado|Cafe Con Leche|Drip Coffee)$/.test(n)||it.cat==='special')post(it,[SHOT]);
   });
 
+  // Sample on-site events (made up for the demo). The owner edits these in Admin > Events.
+  var EVENTS=[
+    {id:'halloween-costume-party',title:'Spooky Saturday: Costume Parade & Trick-or-Treat',date:'2026-10-31',start:'10:00',end:'12:00',tag:'Halloween',note:'Free · all ages · costumes encouraged',
+     desc:'Dress up and parade around the porch under the string lights. Kids get a treat bag, grown-ups get a pumpkin spice latte special, and the best costumes win a free hot chocolate.',published:true},
+    {id:'fall-acoustic-morning',title:'Fall Folk Morning: Live Acoustic Music',date:'2026-11-14',start:'09:30',end:'11:30',tag:'Fall',note:'Free · seating on the porch',
+     desc:'Local musicians play on the porch while you sip something warm. Try our Caramel Apple Chai and Pumpkin Latte, and grab a seat early.',published:true},
+    {id:'pie-and-cider-social',title:'Friendsgiving Pie & Cider Social',date:'2026-11-21',start:'10:00',end:'13:00',tag:'Thanksgiving',note:'Pie by the slice · cider by donation',
+     desc:'A cozy neighborhood get-together before Thanksgiving. Homemade pies, warm apple cider and good company. Bring a friend and say hi to the neighbors.',published:true}
+  ];
+
   var DEF_HOURS=[{o:'07:00',c:'15:00'},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{closed:true},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{o:'07:00',c:'15:00'}]; // Sun..Sat
   var SEED_SETTINGS={taxRate:7.5,tips:[0,10,15,20],prepMin:15,accepting:true,hours:DEF_HOURS,
     phone:'(813) 724-4515',address:'19015 US-41, Lutz, FL 33549'};
@@ -131,6 +141,13 @@
     /* settings */
     settings:function(){var s=Object.assign({},clone(SEED_SETTINGS),read(K.settings,{}));return s},
     saveSettings:function(s){var ok=write(K.settings,s);emit('settings');return ok},
+    /* events */
+    events:function(opts){opts=opts||{};var l=read(K.events,null)||clone(EVENTS);
+      if(!opts.all)l=l.filter(function(e){return e.published});
+      if(opts.upcoming){var t=new Date(),td=t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2);l=l.filter(function(e){return e.date>=td})}
+      return l.sort(function(a,b){return (a.date+(a.start||'')).localeCompare(b.date+(b.start||''))})},
+    saveEvents:function(l){var ok=write(K.events,l);emit('events');return ok},
+    resetEvents:function(){try{localStorage.removeItem(K.events)}catch(e){}emit('events')},
     /* categories */
     cats:function(){return read(K.cats,null)||clone(CATS)},
     saveCats:function(c){var ok=write(K.cats,c);emit('items');return ok},
@@ -219,10 +236,10 @@
       orders.unshift(o);LC.saveOrders(orders);LC.clearCart();return o;
     },
     /* backup */
-    exportAll:function(){return JSON.stringify({version:1,exported:new Date().toISOString(),items:LC.items({all:true}),cats:LC.cats(),settings:LC.settings(),orders:LC.orders()},null,2)},
+    exportAll:function(){return JSON.stringify({version:1,exported:new Date().toISOString(),items:LC.items({all:true}),cats:LC.cats(),events:LC.events({all:true}),settings:LC.settings(),orders:LC.orders()},null,2)},
     importAll:function(txt){
       var d=JSON.parse(txt);if(!d||!Array.isArray(d.items))throw new Error('bad');
-      write(K.items,d.items);if(d.cats)write(K.cats,d.cats);if(d.settings)write(K.settings,d.settings);if(d.orders)write(K.orders,d.orders);
+      write(K.items,d.items);if(d.cats)write(K.cats,d.cats);if(d.events)write(K.events,d.events);if(d.settings)write(K.settings,d.settings);if(d.orders)write(K.orders,d.orders);
       emit('items');emit('settings');emit('orders');
     },
     storageKB:function(){var n=0;try{for(var k in localStorage)if(k.indexOf('lc.')===0)n+=localStorage[k].length*2}catch(e){}return Math.round(n/1024)},

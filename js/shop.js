@@ -138,6 +138,21 @@
   if($('#mq'))$('#mq').addEventListener('input',renderMenu);
   addEventListener('scroll',function(){requestAnimationFrame(spy)},{passive:true});
 
+  /* ---------- events ---------- */
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function t12(v){if(!v)return '';var p=v.split(':'),h=+p[0];return ((h+11)%12+1)+(+p[1]?':'+p[1]:'')+(h>=12?' PM':' AM')}
+  function renderEvents(){
+    var el=$('[data-events]');if(!el)return;
+    var l=L.events({upcoming:true});
+    el.innerHTML=l.length?l.map(function(e,i){var p=e.date.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]);
+      return '<article class="event rv'+(i?' d'+Math.min(i,3):'')+'"><div class="edate"><span class="m">'+MON[dt.getMonth()]+'</span><span class="d">'+dt.getDate()+'</span><span class="w">'+DOW[dt.getDay()].slice(0,3)+'</span></div>'+
+        '<div class="ebody">'+(e.tag?'<span class="etag">'+esc(e.tag)+'</span>':'')+'<h3>'+esc(e.title)+'</h3>'+
+        '<p class="etime">'+DOW[dt.getDay()]+' · '+t12(e.start)+(e.end?' – '+t12(e.end):'')+'</p>'+(e.desc?'<p>'+esc(e.desc)+'</p>':'')+(e.note?'<p class="enote">'+esc(e.note)+'</p>':'')+'</div></article>'}).join('')
+      :'<p class="noev">No events on the calendar right now. Check back soon, or follow along when we post the next one.</p>';
+    $$('.rv',el).forEach(function(x){x.classList.add('in')});
+  }
+  document.addEventListener('lc:events',renderEvents);
+
   /* ---------- home featured ---------- */
   function renderFeatured(){
     var el=$('[data-featured]');if(!el)return;
@@ -208,8 +223,8 @@
   }
 
   /* ---------- boot ---------- */
-  mountCart();renderMenu();renderFeatured();renderCheckout();renderCart();
+  mountCart();renderMenu();renderFeatured();renderEvents();renderCheckout();renderCart();
   ['cart','items','settings'].forEach(function(n){d.addEventListener('lc:'+n,renderCart)});
-  addEventListener('storage',function(){renderCart();renderMenu();renderFeatured()});
+  addEventListener('storage',function(){renderCart();renderMenu();renderFeatured();renderEvents()});
   if(location.hash==='#cart')openCart();
 })();

@@ -103,3 +103,10 @@ table{width:100%;border-collapse:collapse;font-size:.9rem}th{font:800 .64rem var
 .urlrow{display:flex;gap:8px}.urlrow input{flex:1}
 .admin .toast{background:var(--ink)}.admin .toast.bad{background:var(--barn)}
 @media print{.a-top,.a-bar,.oflow,.ohead .ostat,#tab-menu,#tab-reports,#tab-settings,#tab-data,.toast{display:none!important}.ocard{break-inside:avoid;border:1px solid #000;box-shadow:none}.ocard:not(.printme){display:none}}
+
+.evrow{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:16px;margin-bottom:14px;display:grid;gap:10px}
+.evrow .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.evrow label{display:grid;gap:4px;font:800 .72rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.evrow input,.evrow select,.evrow textarea{font:600 .95rem var(--body);padding:9px 10px;border:2px solid var(--ink);border-radius:6px;background:#fff;text-transform:none;letter-spacing:0;color:var(--ink)}
+.evrow .evt{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.evrow .evt .chk{display:flex;gap:8px;align-items:center;flex-direction:row}
+.evrow .past{font:800 .7rem var(--body);letter-spacing:.1em;text-transform:uppercase;background:#ddd;border-radius:999px;padding:3px 10px}

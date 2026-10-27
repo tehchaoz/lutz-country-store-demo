@@ -22,11 +22,11 @@
   function tab(n){
     $$('.a-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===n)});
     $$('.a-pane').forEach(function(p){p.hidden=p.id!=='tab-'+n});
-    ({orders:renderOrders,reports:renderReports,settings:renderSettings,data:renderData,menu:renderMenu})[n]();
+    ({events:renderEvents,orders:renderOrders,reports:renderReports,settings:renderSettings,data:renderData,menu:renderMenu})[n]();
     try{history.replaceState(null,'','#'+n)}catch(e){}
   }
   $$('.a-tabs button').forEach(function(b){b.addEventListener('click',function(){tab(b.dataset.tab)})});
-  function renderAll(){var h=location.hash.slice(1);tab(['orders','reports','settings','data'].indexOf(h)>-1?h:'menu');renderBadge()}
+  function renderAll(){var h=location.hash.slice(1);tab(['events','orders','reports','settings','data'].indexOf(h)>-1?h:'menu');renderBadge()}
   function fillCats(sel,all){sel.innerHTML=(all?'<option value="">All categories</option>':'')+L.cats().map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('')}
 
   /* ---------- menu ---------- */
@@ -220,6 +220,34 @@
     L.orders().filter(function(o){return o.status!=='cancelled'&&new Date(o.date)>=cut}).forEach(function(o){o.items.forEach(function(i){var r=m[i.id]||(m[i.id]={n:i.name,q:0,rev:0});r.q+=i.qty;r.rev+=i.qty*i.price})});
     var rows=[['Item','Sold','Sales']].concat(Object.keys(m).map(function(k){return [m[k].n,m[k].q,m[k].rev.toFixed(2)]}));if(rows.length<2){toast('No sales in this range',true);return}
     download('lutz-item-sales.csv','text/csv',rows.map(function(r){return r.map(csvq).join(',')}).join('\n'));
+  });
+
+  /* ---------- events ---------- */
+  function todayStr(){var t=new Date();return t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2)}
+  function renderEvents(){
+    var TAGS=['Halloween','Fall','Thanksgiving','Music','Holiday','Community','Special'],l=L.events({all:true}),td=todayStr();
+    $('#evlist').innerHTML=l.length?l.map(function(e){
+      return '<div class="evrow" data-id="'+esc(e.id)+'"><label>Title<input data-f="title" value="'+esc(e.title)+'" maxlength="90"></label>'+
+        '<div class="g3"><label>Date<input type="date" data-f="date" value="'+esc(e.date)+'"></label><label>Starts<input type="time" data-f="start" value="'+esc(e.start||'')+'"></label><label>Ends<input type="time" data-f="end" value="'+esc(e.end||'')+'"></label>'+
+        '<label>Label<select data-f="tag">'+TAGS.concat(TAGS.indexOf(e.tag)<0&&e.tag?[e.tag]:[]).map(function(t){return '<option'+(t===e.tag?' selected':'')+'>'+esc(t)+'</option>'}).join('')+'</select></label></div>'+
+        '<label>Description<textarea rows="3" data-f="desc" maxlength="400">'+esc(e.desc||'')+'</textarea></label>'+
+        '<label>Small print <span style="text-transform:none;letter-spacing:0;font-weight:600">(price, ages, what to bring)</span><input data-f="note" value="'+esc(e.note||'')+'" maxlength="90"></label>'+
+        '<div class="evt"><label class="chk"><input type="checkbox" data-f="published"'+(e.published?' checked':'')+'> Show on site</label>'+(e.date<td?'<span class="past">Past event · hidden</span>':'')+'<span style="flex:1"></span><button class="btn ghost mini danger" type="button" data-del>Delete</button></div></div>'}).join('')
+      :'<p class="fine">No events yet. Click <b>+ Add event</b>.</p>';
+  }
+  $('#evlist').addEventListener('change',function(e){
+    var f=e.target.dataset.f;if(!f)return;var row=e.target.closest('.evrow'),l=L.events({all:true}),ev=l.filter(function(x){return x.id===row.dataset.id})[0];if(!ev)return;
+    if(f==='published')ev.published=e.target.checked;else{if(f==='title'&&!e.target.value.trim()){renderEvents();return}ev[f]=e.target.value}
+    saved(L.saveEvents(l));if(f==='date')renderEvents();
+  });
+  $('#evlist').addEventListener('click',function(e){
+    if(!e.target.matches('[data-del]'))return;var row=e.target.closest('.evrow'),l=L.events({all:true}),ev=l.filter(function(x){return x.id===row.dataset.id})[0];
+    if(!ev||!confirm('Delete "'+ev.title+'"?'))return;saved(L.saveEvents(l.filter(function(x){return x!==ev&&x.id!==ev.id})));renderEvents();
+  });
+  $('#addev').addEventListener('click',function(){
+    var l=L.events({all:true}),t=new Date();t.setDate(t.getDate()+7);
+    l.push({id:'ev-'+Date.now().toString(36),title:'New event',date:t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2),start:'10:00',end:'12:00',tag:'Community',note:'',desc:'',published:true});
+    saved(L.saveEvents(l));renderEvents();var r=$$('#evlist .evrow');r.length&&r[r.length-1].scrollIntoView({block:'center'});
   });
 
   /* ---------- settings ---------- */

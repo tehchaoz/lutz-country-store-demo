@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#0f1830"><link rel="icon" href="img/barn.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=4"><link rel="stylesheet" href="css/admin.css?v=1"></head>
+<link rel="stylesheet" href="css/style.css?v=11"><link rel="stylesheet" href="css/admin.css?v=2"></head>
 <body class="admin">
 <div id="login" class="login" hidden>
   <form id="loginform" class="login-box" autocomplete="off">
@@ -21,6 +21,7 @@
     <a class="a-brand" href="index.html" title="View site"><img src="img/barn.svg" alt="" width="34" height="34"><span>Admin</span></a>
     <nav class="a-tabs" role="tablist" aria-label="Admin sections">
       <button role="tab" data-tab="menu" class="on">Menu</button>
+      <button role="tab" data-tab="events">Events</button>
       <button role="tab" data-tab="orders">Orders <i id="newcount" hidden></i></button>
       <button role="tab" data-tab="reports">Reports</button>
       <button role="tab" data-tab="settings">Settings</button>
@@ -34,6 +35,11 @@
       <div class="a-bar"><input type="search" id="q" placeholder="Search menu items…" aria-label="Search"><select id="cat" aria-label="Category"></select><button class="btn" id="addbtn" type="button">+ Add item</button></div>
       <div id="plist" class="plist"></div>
       <p class="fine">Tip: change a price right in the list, or flip <b>Available</b> off when you run out. Both save instantly. Open <b>Edit</b> to manage add-ons like bread, milk, extra shot and bacon.</p>
+    </section>
+    <section id="tab-events" class="a-pane" hidden>
+      <div class="a-bar"><h2>Events</h2><button class="btn" id="addev" type="button">+ Add event</button></div>
+      <p class="fine" style="margin-bottom:16px">Events show on the home page in date order. Past events hide themselves. Changes save instantly. Turn <b>Show on site</b> off to keep a draft.</p>
+      <div id="evlist"></div>
     </section>
     <section id="tab-orders" class="a-pane" hidden>
       <div class="a-bar"><h2>Orders</h2><select id="ofilter" aria-label="Filter orders"><option value="active">Active</option><option value="all">All</option></select><button class="btn ghost mini" id="csv" type="button">Export CSV</button></div>
@@ -91,5 +97,5 @@
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="js/store.js?v=3"></script><script src="js/admin.js?v=2"></script>
+<script src="js/store.js?v=11"></script><script src="js/admin.js?v=11"></script>
 </body></html>
