@@ -22,11 +22,11 @@
   function tab(n){
     $$('.a-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===n)});
     $$('.a-pane').forEach(function(p){p.hidden=p.id!=='tab-'+n});
-    ({events:renderEvents,orders:renderOrders,reports:renderReports,settings:renderSettings,data:renderData,menu:renderMenu})[n]();
+    ({events:renderEvents,photos:renderPhotos,site:renderSite,orders:renderOrders,reports:renderReports,settings:renderSettings,data:renderData,menu:renderMenu})[n]();
     try{history.replaceState(null,'','#'+n)}catch(e){}
   }
   $$('.a-tabs button').forEach(function(b){b.addEventListener('click',function(){tab(b.dataset.tab)})});
-  function renderAll(){var h=location.hash.slice(1);tab(['events','orders','reports','settings','data'].indexOf(h)>-1?h:'menu');renderBadge()}
+  function renderAll(){var h=location.hash.slice(1);tab(['events','photos','site','orders','reports','settings','data'].indexOf(h)>-1?h:'menu');renderBadge()}
   function fillCats(sel,all){sel.innerHTML=(all?'<option value="">All categories</option>':'')+L.cats().map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('')}
 
   /* ---------- menu ---------- */
@@ -250,24 +250,61 @@
     saved(L.saveEvents(l));renderEvents();var r=$$('#evlist .evrow');r.length&&r[r.length-1].scrollIntoView({block:'center'});
   });
 
+  /* ---------- photos ---------- */
+  function shrink(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=1400,k=Math.min(1,m/Math.max(im.width,im.height)),c=d.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.82))};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
+  function renderPhotos(){
+    var l=L.gallery();
+    $('#photolist').innerHTML=l.length?l.map(function(g,i){return '<div class="phrow" data-id="'+esc(g.id)+'"><img src="'+esc(g.src)+'" alt=""><div><label>Caption<input data-p="cap" value="'+esc(g.cap||'')+'" maxlength="80"></label><div class="phbtn"><button class="ib" data-p="up"'+(i?'':' disabled')+' aria-label="Move up">↑</button><button class="ib" data-p="dn"'+(i<l.length-1?'':' disabled')+' aria-label="Move down">↓</button><button class="btn ghost mini danger" data-p="rm" type="button">Delete</button></div></div></div>'}).join(''):'<p class="fine">No photos yet. Click <b>+ Add photos</b>.</p>';
+  }
+  $('#photoin').addEventListener('change',function(e){
+    var fl=[].slice.call(e.target.files);e.target.value='';if(!fl.length)return;toast('Adding '+fl.length+' photo'+(fl.length>1?'s':'')+'…');
+    Promise.all(fl.map(shrink)).then(function(srcs){var l=L.gallery();srcs.forEach(function(src,i){l.push({id:'p'+Date.now().toString(36)+i,src:src,cap:''})});saved(L.saveGallery(l));renderPhotos()}).catch(function(){toast('Could not read that photo',true)});
+  });
+  $('#photolist').addEventListener('change',function(e){if(e.target.dataset.p!=='cap')return;var l=L.gallery(),id=e.target.closest('.phrow').dataset.id;l.forEach(function(g){if(g.id===id)g.cap=e.target.value});saved(L.saveGallery(l))});
+  $('#photolist').addEventListener('click',function(e){
+    var b=e.target.closest('[data-p]');if(!b||b.tagName!=='BUTTON')return;var l=L.gallery(),id=b.closest('.phrow').dataset.id,i=l.findIndex(function(g){return g.id===id}),a=b.dataset.p;
+    if(a==='up'&&i>0)l.splice(i-1,0,l.splice(i,1)[0]);if(a==='dn'&&i<l.length-1)l.splice(i+1,0,l.splice(i,1)[0]);
+    if(a==='rm'){if(!confirm('Delete this photo?'))return;l.splice(i,1)}
+    saved(L.saveGallery(l));renderPhotos();
+  });
+
+  /* ---------- site (theme, about, rewards) ---------- */
+  var TLN={'':'No theme right now','fall':'Fall and Thanksgiving (leaves and a turkey on the train)','christmas':'Christmas (lights and presents on the train)'};
+  function tlRow(x){return '<div class="tlrow"><input data-t="h" placeholder="Title" value="'+esc(x.h||'')+'" maxlength="60"><textarea data-t="t" rows="2" placeholder="What happened" maxlength="240">'+esc(x.t||'')+'</textarea><button type="button" class="ib" data-t="rm" aria-label="Remove milestone">×</button></div>'}
+  function renderSite(){
+    var s=L.settings(),a=s.about||{},f=$('#siteform').elements;
+    f.theme.value=s.theme||'auto';f.loyaltyUrl.value=s.loyaltyUrl||'';f.loyaltyText.value=s.loyaltyText||'';f.aboutTitle.value=a.title||'';f.aboutBody.value=(a.body||[]).join('\n\n');
+    $('#tlist').innerHTML=(a.timeline||[]).map(tlRow).join('');
+    $('#themenow').textContent='Showing on the site today: '+TLN[L.theme()];
+  }
+  $('#addtl').addEventListener('click',function(){$('#tlist').insertAdjacentHTML('beforeend',tlRow({}))});
+  $('#tlist').addEventListener('click',function(e){if(e.target.dataset.t==='rm')e.target.closest('.tlrow').remove()});
+  $('#siteform').addEventListener('submit',function(e){
+    e.preventDefault();var f=e.target.elements,s=L.settings();
+    s.theme=f.theme.value;s.loyaltyUrl=f.loyaltyUrl.value.trim();s.loyaltyText=f.loyaltyText.value.trim();
+    s.about={title:f.aboutTitle.value.trim(),body:f.aboutBody.value.split(/\n\s*\n/).map(function(x){return x.trim()}).filter(Boolean),
+      timeline:$$('#tlist .tlrow').map(function(r){return {h:$('[data-t=h]',r).value.trim(),t:$('[data-t=t]',r).value.trim()}}).filter(function(x){return x.h||x.t})};
+    if(saved(L.saveSettings(s)))$('#themenow').textContent='Showing on the site today: '+TLN[L.theme()];
+  });
+
   /* ---------- settings ---------- */
   var DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   function renderSettings(){
-    var s=L.settings(),f=$('#setform').elements;f.accepting.checked=s.accepting;f.prepMin.value=s.prepMin;f.taxRate.value=s.taxRate;f.tips.value=s.tips.join(', ');
+    var s=L.settings(),f=$('#setform').elements;f.accepting.checked=s.accepting;f.prepMin.value=s.prepMin;f.taxRate.value=s.taxRate;f.breakfastEnd.value=s.breakfastEnd||'11:00';f.lunchStart.value=s.lunchStart||'11:00';$$('#lunchdays input').forEach(function(c){c.checked=(s.lunchDays||[1,2,4,5]).indexOf(+c.value)>-1});f.tips.value=s.tips.join(', ');
     $('#hoursed').innerHTML=[1,2,3,4,5,6,0].map(function(i){var h=s.hours[i];return '<div class="hr" data-d="'+i+'"><b>'+DN[i]+'</b><input type="time" data-h="o" value="'+(h.o||'07:00')+'" aria-label="'+DN[i]+' opens"><input type="time" data-h="c" value="'+(h.c||'15:00')+'" aria-label="'+DN[i]+' closes"><label class="chk"><input type="checkbox" data-h="x"'+(h.closed?' checked':'')+'> Closed</label></div>'}).join('');
     renderCats();
   }
   $('#setform').addEventListener('submit',function(e){
     e.preventDefault();var f=e.target.elements,s=L.settings();
-    s.accepting=f.accepting.checked;s.prepMin=Math.max(5,parseInt(f.prepMin.value,10)||15);s.taxRate=Math.max(0,parseFloat(f.taxRate.value)||0);
+    s.accepting=f.accepting.checked;s.prepMin=Math.max(5,parseInt(f.prepMin.value,10)||15);s.taxRate=Math.max(0,parseFloat(f.taxRate.value)||0);s.breakfastEnd=f.breakfastEnd.value||'11:00';s.lunchStart=f.lunchStart.value||'11:00';s.lunchDays=$$('#lunchdays input').filter(function(c){return c.checked}).map(function(c){return +c.value});
     var tips=f.tips.value.split(',').map(function(x){return parseFloat(x)}).filter(function(x){return !isNaN(x)&&x>=0});s.tips=tips.length?tips.slice(0,4):[0,10,15,20];
     $$('#hoursed .hr').forEach(function(r){var i=+r.dataset.d;s.hours[i]={o:$('[data-h=o]',r).value,c:$('[data-h=c]',r).value,closed:$('[data-h=x]',r).checked}});
     saved(L.saveSettings(s));
   });
   function renderCats(){
-    var cs=L.cats();$('#catlist').innerHTML=cs.map(function(c,i){var n=L.items({all:true,cat:c.id}).length;return '<div class="catrow" data-i="'+i+'"><input value="'+esc(c.name)+'" data-c="name" aria-label="Category name"><span class="n">'+n+' item'+(n===1?'':'s')+'</span><button class="ib" data-c="up"'+(i?'':' disabled')+' aria-label="Move up">↑</button><button class="ib" data-c="dn"'+(i<cs.length-1?'':' disabled')+' aria-label="Move down">↓</button><button class="ib del" data-c="rm">Delete</button></div>'}).join('')+'<div class="catrow"><input id="newcat" placeholder="New category name"><button class="btn mini" type="button" id="addcat">Add category</button></div>';
+    var cs=L.cats();$('#catlist').innerHTML=cs.map(function(c,i){var n=L.items({all:true,cat:c.id}).length;return '<div class="catrow" data-i="'+i+'"><input value="'+esc(c.name)+'" data-c="name" aria-label="Category name"><select data-c="menu" aria-label="Served during" title="When can customers order this category?"><option value="all"'+((c.menu||'all')==='all'?' selected':'')+'>All day</option><option value="breakfast"'+(c.menu==='breakfast'?' selected':'')+'>Breakfast time</option><option value="lunch"'+(c.menu==='lunch'?' selected':'')+'>Lunch time</option></select><span class="n">'+n+' item'+(n===1?'':'s')+'</span><button class="ib" data-c="up"'+(i?'':' disabled')+' aria-label="Move up">↑</button><button class="ib" data-c="dn"'+(i<cs.length-1?'':' disabled')+' aria-label="Move down">↓</button><button class="ib del" data-c="rm">Delete</button></div>'}).join('')+'<div class="catrow"><input id="newcat" placeholder="New category name"><button class="btn mini" type="button" id="addcat">Add category</button></div>';
   }
-  $('#catlist').addEventListener('change',function(e){if(e.target.dataset.c!=='name')return;var cs=L.cats(),i=+e.target.closest('.catrow').dataset.i;if(!e.target.value.trim()){renderCats();return}cs[i].name=e.target.value.trim();saved(L.saveCats(cs))});
+  $('#catlist').addEventListener('change',function(e){if(e.target.dataset.c==='menu'){var cm=L.cats(),j=+e.target.closest('.catrow').dataset.i;cm[j].menu=e.target.value;saved(L.saveCats(cm));return}if(e.target.dataset.c!=='name')return;var cs=L.cats(),i=+e.target.closest('.catrow').dataset.i;if(!e.target.value.trim()){renderCats();return}cs[i].name=e.target.value.trim();saved(L.saveCats(cs))});
   $('#catlist').addEventListener('click',function(e){
     var cs=L.cats();
     if(e.target.id==='addcat'){var n=$('#newcat').value.trim();if(!n)return;var id=L.slug(n);while(cs.some(function(c){return c.id===id}))id+='-2';cs.push({id:id,name:n});saved(L.saveCats(cs));renderCats();return}

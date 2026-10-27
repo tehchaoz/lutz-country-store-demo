@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#0f1830"><link rel="icon" href="img/barn.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=13"><link rel="stylesheet" href="css/admin.css?v=2"></head>
+<link rel="stylesheet" href="css/style.css?v=20"><link rel="stylesheet" href="css/admin.css?v=20"></head>
 <body class="admin">
 <div id="login" class="login" hidden>
   <form id="loginform" class="login-box" autocomplete="off">
@@ -18,10 +18,12 @@
 </div>
 <div id="app" hidden>
   <header class="a-top">
-    <a class="a-brand" href="index.html" title="View site"><img src="img/barn.svg" alt="" width="34" height="34"><span>Admin</span></a>
+    <a class="a-brand" href="index.html" title="View site"><img src="img/logo-sm.png" alt="" width="34" height="34"><span>Admin</span></a>
     <nav class="a-tabs" role="tablist" aria-label="Admin sections">
       <button role="tab" data-tab="menu" class="on">Menu</button>
-      <button role="tab" data-tab="events">Events</button>
+      <button role="tab" data-tab="events">Events and Happenings</button>
+      <button role="tab" data-tab="photos">Photos</button>
+      <button role="tab" data-tab="site">Site</button>
       <button role="tab" data-tab="orders">Orders <i id="newcount" hidden></i></button>
       <button role="tab" data-tab="reports">Reports</button>
       <button role="tab" data-tab="settings">Settings</button>
@@ -37,9 +39,30 @@
       <p class="fine">Tip: change a price right in the list, or flip <b>Available</b> off when you run out. Both save instantly. Open <b>Edit</b> to manage add-ons like bread, milk, extra shot and bacon.</p>
     </section>
     <section id="tab-events" class="a-pane" hidden>
-      <div class="a-bar"><h2>Events</h2><button class="btn" id="addev" type="button">+ Add event</button></div>
+      <div class="a-bar"><h2>Events and Happenings</h2><button class="btn" id="addev" type="button">+ Add event</button></div>
       <p class="fine" style="margin-bottom:16px">Events show on the home page in date order. Past events hide themselves. Changes save instantly. Turn <b>Show on site</b> off to keep a draft.</p>
       <div id="evlist"></div>
+    </section>
+    <section id="tab-photos" class="a-pane" hidden>
+      <div class="a-bar"><h2>Photos</h2><label class="btn" for="photoin" style="cursor:pointer">+ Add photos<input type="file" id="photoin" accept="image/*" multiple hidden></label></div>
+      <p class="fine" style="margin-bottom:16px">These show in the gallery on the home page and the About Us page. Photos are shrunk to fit. Use the arrows to reorder; the first six show on the home page.</p>
+      <div id="photolist" class="photolist"></div>
+    </section>
+    <section id="tab-site" class="a-pane" hidden>
+      <h2>Site</h2>
+      <form id="siteform" class="set">
+        <h3>Holiday theme</h3>
+        <label>Theme<select name="theme"><option value="auto">Automatic by date (Fall and Thanksgiving Oct 1 to Nov 30, Christmas Dec 1 to Dec 26)</option><option value="none">Off</option><option value="fall">Fall and Thanksgiving (always on)</option><option value="christmas">Christmas (always on)</option></select></label>
+        <p class="fine" id="themenow"></p>
+        <h3>Rewards signup</h3>
+        <label>Signup link <small>Paste the Toast rewards signup link here</small><input name="loyaltyUrl" type="url" placeholder="https://"></label>
+        <label>Message<textarea name="loyaltyText" rows="2" maxlength="200"></textarea></label>
+        <h3>About Us page</h3>
+        <label>Headline<input name="aboutTitle" maxlength="120"></label>
+        <label>Our story <small>Separate paragraphs with a blank line</small><textarea name="aboutBody" rows="9"></textarea></label>
+        <p class="fldlabel">History timeline</p><div id="tlist"></div><button type="button" class="btn ghost mini" id="addtl">+ Add a milestone</button>
+        <div><button class="btn" type="submit">Save site changes</button></div>
+      </form>
     </section>
     <section id="tab-orders" class="a-pane" hidden>
       <div class="a-bar"><h2>Orders</h2><select id="ofilter" aria-label="Filter orders"><option value="active">Active</option><option value="all">All</option></select><button class="btn ghost mini" id="csv" type="button">Export CSV</button></div>
@@ -54,6 +77,10 @@
       <form id="setform" class="set">
         <label class="chk"><input type="checkbox" name="accepting"> Accepting online orders <small>Turn off to pause pickup orders when the kitchen is slammed.</small></label>
         <div class="two"><label>Prep time (minutes)<input type="number" min="5" step="1" name="prepMin"></label><label>Sales tax (%) <small>Confirm your rate</small><input type="number" step="0.01" min="0" name="taxRate"></label></div>
+        <h3>Ordering times</h3>
+        <div class="two"><label>Breakfast served until<input type="time" name="breakfastEnd"></label><label>Lunch starts at<input type="time" name="lunchStart"></label></div>
+        <div class="chk" id="lunchdays" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><b>Lunch served on:</b><label class="chk"><input type="checkbox" value="1"> Mon</label><label class="chk"><input type="checkbox" value="2"> Tue</label><label class="chk"><input type="checkbox" value="3"> Wed</label><label class="chk"><input type="checkbox" value="4"> Thu</label><label class="chk"><input type="checkbox" value="5"> Fri</label><label class="chk"><input type="checkbox" value="6"> Sat</label><label class="chk"><input type="checkbox" value="0"> Sun</label></div>
+        <p class="fine">Online orders only work while the store is open (see Hours below). Breakfast items stop being orderable at the breakfast cutoff, and lunch items start at the lunch time on the days checked. Set each category's menu under Menu categories.</p>
         <label>Tip buttons (percentages, comma separated)<input name="tips" placeholder="0, 10, 15, 20"></label>
         <h3>Hours</h3><div id="hoursed"></div>
         <div><button class="btn" type="submit">Save settings</button></div>
@@ -63,7 +90,7 @@
       <form id="pwform" class="set"><label>New password<input type="password" name="np" minlength="6" required autocomplete="new-password"></label><label>Confirm<input type="password" name="np2" minlength="6" required autocomplete="new-password"></label><div><button class="btn ghost" type="submit">Update password</button></div></form>
     </section>
     <section id="tab-data" class="a-pane" hidden>
-      <h2>Data &amp; backup</h2>
+      <h2>Data and backup</h2>
       <div class="notice"><b>How saving works in this demo.</b> Menu, photos, orders and settings are saved inside <em>this browser</em>. Customers on other devices will not see your edits until the store is connected to a real database. Download a backup regularly.</div>
       <div class="meter"><span id="usage"></span><div class="bar"><i id="usagebar"></i></div></div>
       <div class="data-actions"><button class="btn" id="export" type="button">Download backup (.json)</button><label class="btn ghost" for="import" style="cursor:pointer">Restore from backup<input type="file" id="import" accept="application/json,.json" hidden></label><button class="btn ghost danger" id="reset" type="button">Reset menu to defaults</button></div>
@@ -80,7 +107,7 @@
           <label class="fld">Description<textarea name="desc" rows="3"></textarea></label>
           <label class="fld">Ribbon <small>(optional, e.g. New, Seasonal)</small><input name="badge" maxlength="20"></label>
           <div class="checks"><label class="chk"><input type="checkbox" name="available"> Available today</label><label class="chk"><input type="checkbox" name="published"> Show on menu</label><label class="chk"><input type="checkbox" name="featured"> Feature on home page</label><label class="chk"><input type="checkbox" name="est"> Price needs confirming</label></div>
-          <p class="fldlabel" style="margin-top:22px">Add-ons &amp; options <small>Sizes, bread, milk, extras. Customers see these when they tap the item.</small></p>
+          <p class="fldlabel" style="margin-top:22px">Add-ons and options <small>Sizes, bread, milk, extras. Customers see these when they tap the item.</small></p>
           <div id="groups"></div>
           <button type="button" class="btn ghost mini" id="addgroup">+ Add an option group</button>
         </div>
@@ -97,5 +124,5 @@
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="js/store.js?v=13"></script><script src="js/admin.js?v=13"></script>
+<script src="js/store.js?v=20"></script><script src="js/admin.js?v=20"></script>
 </body></html>

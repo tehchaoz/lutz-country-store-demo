@@ -42,7 +42,7 @@
       return '<div class="line"><div><span class="nm">'+esc(l.it.name)+'</span>'+(optTxt(l)?'<span class="opt">'+esc(optTxt(l))+'</span>':'')+'</div><span class="lp">'+m2(l.total)+'</span>'+
         '<div class="row2"><div class="qty" role="group" aria-label="Quantity"><button type="button" data-q="-" data-k="'+k+'" aria-label="Fewer">−</button><span>'+l.l.qty+'</span><button type="button" data-q="+" data-k="'+k+'" aria-label="More">+</button></div><button class="rm" type="button" data-q="rm" data-k="'+k+'">Remove</button></div></div>'}).join('');
     var t=L.totals();
-    foot.innerHTML='<div class="sub"><span>Subtotal</span><b>'+m2(t.sub)+'</b></div><p class="fine">Tax and tip are added at checkout. Pickup only.</p><a class="btn block" href="checkout.html">Checkout</a><p class="fine demo">Demo kitchen. No real payments are taken.</p>';
+    foot.innerHTML='<div class="sub"><span>Subtotal</span><b>'+m2(t.sub)+'</b></div><p class="fine">Tax and tip are added at checkout. Pickup only.</p>'+(L.orderState().ok?'<a class="btn block" href="checkout.html">Checkout</a>':'<p class="form-msg err" style="margin:0 0 10px">'+esc(L.orderState().text)+'</p><span class="btn block" style="opacity:.45;pointer-events:none">Checkout unavailable</span>')+'<p class="fine demo">Demo kitchen. No real payments are taken.</p>';
   }
 
   /* ---------- item picker ---------- */
@@ -91,17 +91,18 @@
     var a=e.target.closest('[data-open]');if(a){e.preventDefault();openCart();return}
     var b=e.target.closest('[data-add]');if(!b)return;
     var it=L.item(b.dataset.add);if(!it)return;
+    var bl=L.itemBlock(it);if(bl){toast(esc(bl));return}
     if(it.groups&&it.groups.length){openItem(it.id)}
     else if(L.addToCart(it.id,{},'',1)){renderCart();toast('Added <b>'+esc(it.name)+'</b> · <a href="#cart" data-open>View order</a>')}
   });
-  d.addEventListener('click',function(e){var c=e.target.closest('[data-custom]');if(c){e.preventDefault();openItem(c.dataset.custom)}});
+  d.addEventListener('click',function(e){var c=e.target.closest('[data-custom]');if(c){e.preventDefault();var ci=L.item(c.dataset.custom),bl=ci&&L.itemBlock(ci);if(bl){toast(esc(bl));return}openItem(c.dataset.custom)}});
 
   /* ---------- menu page ---------- */
   function row(it){
-    var thumb=it.images&&it.images[0],out=!it.available;
+    var thumb=it.images&&it.images[0],soldout=!it.available,blk=soldout?'':L.itemBlock(it),out=soldout||!!blk;
     return '<div class="mi'+(thumb?' thumb':'')+(out?' out':'')+'">'+(thumb?'<div class="im"><img src="'+esc(thumb)+'" alt="" loading="lazy"></div>':'')+
-      '<div><h3>'+(out?esc(it.name):'<a href="#" data-custom="'+esc(it.id)+'" style="text-decoration:none">'+esc(it.name)+'</a>')+(it.badge?'<span class="tg">'+esc(it.badge)+'</span>':'')+'</h3>'+(it.desc?'<p>'+esc(it.desc)+'</p>':'')+'</div>'+
-      '<div class="buy"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(out?'<span class="soldtxt">Sold out today</span>':'<button class="addb" type="button" data-add="'+esc(it.id)+'" aria-label="Add '+esc(it.name)+'">+</button>')+'</div></div>';
+      '<div><h3>'+(soldout?esc(it.name):'<a href="#" data-custom="'+esc(it.id)+'" style="text-decoration:none">'+esc(it.name)+'</a>')+(it.badge?'<span class="tg">'+esc(it.badge)+'</span>':'')+'</h3>'+(it.desc?'<p>'+esc(it.desc)+'</p>':'')+'</div>'+
+      '<div class="buy"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(soldout?'<span class="soldtxt">Sold out today</span>':blk?'<span class="soldtxt">'+esc(blk.replace(/^We are closed right now\. .*$/,'Closed').replace(/^Online ordering is .*$/,'Not available'))+'</span>':'<button class="addb" type="button" data-add="'+esc(it.id)+'" aria-label="Add '+esc(it.name)+'">+</button>')+'</div></div>';
   }
   function renderMenu(){
     var root=$('#menu-root');if(!root)return;
@@ -109,12 +110,13 @@
     L.cats().forEach(function(c){
       var its=L.items({cat:c.id}).filter(function(i){return !q||(i.name+' '+i.desc).toLowerCase().indexOf(q)>-1});
       if(!its.length)return;
-      html+='<section class="mcat" id="c-'+esc(c.id)+'"><h2>'+esc(c.name)+'</h2>'+(c.note?'<p class="cnote">'+esc(c.note)+'</p>':'')+'<div class="mlist">'+its.map(row).join('')+'</div></section>';
+      var mn=L.menuNote(c.menu||'all')||c.note||'';
+      html+='<section class="mcat" id="c-'+esc(c.id)+'"><h2>'+esc(c.name)+'</h2>'+(mn?'<p class="cnote">'+esc(mn)+'</p>':'')+'<div class="mlist">'+its.map(row).join('')+'</div></section>';
       nav+='<a href="#c-'+esc(c.id)+'">'+esc(c.name)+'</a>';
     });
     root.innerHTML=html||'<div class="empty">'+barn+'<p>Nothing matches “'+esc(q)+'”.</p></div>';
     var cn=$('#catnav');if(cn){cn.innerHTML='<div class="wrap">'+nav+'</div><button type="button" class="cnb prev" aria-label="Scroll categories left" hidden>‹</button><button type="button" class="cnb next" aria-label="Scroll categories right">›</button>';navArrows(cn)}
-    var st=L.status(),cl=$('#closednote');if(cl){cl.hidden=st.open;cl.textContent=st.open?'':'We are closed right now ('+st.text.replace('Closed · ','')+'). You can still order and pick a pickup time for when we open.'}
+    var st=L.status(),cl=$('#closednote');if(cl){var os=L.orderState();cl.hidden=os.ok;cl.textContent=os.ok?'':os.text+' You can browse the menu in the meantime.'}
     spy();
   }
   function navArrows(cn){
@@ -153,14 +155,36 @@
   }
   document.addEventListener('lc:events',renderEvents);
 
+  /* ---------- gallery, about, loyalty ---------- */
+  function renderGallery(){
+    $$('[data-gallery]').forEach(function(el){
+      var l=L.gallery(),n=+el.dataset.limit;if(n)l=l.slice(0,n);
+      el.innerHTML=l.length?l.map(function(g,i){return '<figure class="gi rv in" style="--i:'+i+'"><button type="button" data-lb="'+esc(g.id)+'" aria-label="Open photo'+(g.cap?': '+esc(g.cap):'')+'"><img src="'+esc(g.src)+'" alt="'+esc(g.cap||'Photo of Lutz Country Store and Cafe')+'" loading="lazy"></button>'+(g.cap?'<figcaption>'+esc(g.cap)+'</figcaption>':'')+'</figure>'}).join(''):'<p class="noev">Photos coming soon.</p>';
+    });
+  }
+  d.addEventListener('click',function(e){
+    var b=e.target.closest('[data-lb]');if(!b)return;var g=L.gallery().filter(function(x){return x.id===b.dataset.lb})[0];if(!g)return;
+    var lb=$('#lightbox');if(!lb){lb=d.createElement('dialog');lb.id='lightbox';lb.className='lightbox';lb.innerHTML='<button type="button" class="x" aria-label="Close photo">×</button><img alt=""><p></p>';d.body.appendChild(lb);lb.addEventListener('click',function(ev){if(ev.target!==$('img',lb))lb.close()})}
+    $('img',lb).src=g.src;$('img',lb).alt=g.cap||'';$('p',lb).textContent=g.cap||'';lb.showModal();
+  });
+  function renderAbout(){
+    var s=L.settings(),a=s.about||{};
+    var t=$('[data-about-title]');if(t)t.textContent=a.title||'';
+    var bd=$('[data-about-body]');if(bd)bd.innerHTML=(a.body||[]).map(function(p,i){return '<p class="rv in d'+Math.min(i,3)+'">'+esc(p)+'</p>'}).join('')+'<div class="hero-cta"><a class="btn" href="menu.html">See the menu</a><a class="btn ghost dark" href="visit.html">Hours and directions</a></div>';
+    var tl=$('[data-timeline]');if(tl)tl.innerHTML=(a.timeline||[]).map(function(x,i){return '<li class="rv in"><span class="dot"></span><h3>'+esc(x.h)+'</h3><p>'+esc(x.t)+'</p></li>'}).join('');
+    $$('[data-loyalty]').forEach(function(l){l.href=s.loyaltyUrl||'#'});
+    $$('[data-loyalty-text]').forEach(function(l){l.textContent=s.loyaltyText||''});
+  }
+  document.addEventListener('lc:gallery',renderGallery);document.addEventListener('lc:settings',renderAbout);
+
   /* ---------- home featured ---------- */
   function renderFeatured(){
     var el=$('[data-featured]');if(!el)return;
-    var l=L.items().filter(function(i){return i.featured&&i.available}).slice(0,4);if(!l.length)l=L.items().filter(function(i){return i.available}).slice(0,4);
+    var l=L.items().filter(function(i){return i.featured&&i.available});l=l.filter(function(i){return !L.itemBlock(i)}).concat(l.filter(function(i){return L.itemBlock(i)})).slice(0,4);if(!l.length)l=L.items().filter(function(i){return i.available}).slice(0,4);
     el.innerHTML=l.map(function(it,i){
       return '<article class="dish rv'+(i?' d'+Math.min(i,3):'')+'">'+(it.badge?'<span class="badge">'+esc(it.badge)+'</span>':'')+(it.images&&it.images[0]?'<div class="photo"><img src="'+esc(it.images[0])+'" alt="'+esc(it.name)+'" loading="lazy"></div>':'')+
         '<span class="cat">'+esc(L.catName(it.cat))+'</span><h3>'+esc(it.name)+'</h3>'+(it.desc?'<p>'+esc(it.desc.length>100?it.desc.slice(0,97)+'…':it.desc)+'</p>':'<p></p>')+
-        '<div class="row"><span class="price">'+fromTxt(it)+m2(it.price)+'</span><button class="btn mini" type="button" data-add="'+esc(it.id)+'">Add</button></div></article>'}).join('');
+        '<div class="row"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(L.itemBlock(it)?'<span class="soldtxt">Not available now</span>':'<button class="btn mini" type="button" data-add="'+esc(it.id)+'">Add</button>')+'</div></article>'}).join('');
   }
 
   /* ---------- checkout ---------- */
@@ -168,7 +192,9 @@
     var root=$('#checkout-root');if(!root)return;var s=L.settings(),lines=L.cartLines();
     if(!lines.length){root.innerHTML='<div class="empty">'+barn+'<p>Your order is empty.</p><a class="btn" href="menu.html">See the menu</a></div>';return}
     if(!s.accepting){root.innerHTML='<div class="empty">'+barn+'<h2>Online ordering is paused</h2><p>We are not taking online orders right now. Give us a call at <a href="tel:8137244515"><b>'+esc(s.phone)+'</b></a>.</p></div>';return}
-    var slots=L.slots(),st=L.status(),asapOk=st.open&&(new Date().getHours()*60+new Date().getMinutes()+s.prepMin<=st.closeMin-10);
+    var os=L.orderState();
+    if(!os.ok){root.innerHTML='<div class="empty">'+barn+'<h2>We cannot take your order right now</h2><p>'+esc(os.text)+'</p><a class="btn" href="menu.html">Back to the menu</a></div>';return}
+    var slots=L.slots(),st=L.status(),asapOk=true;
     root.innerHTML='<div class="demo-banner"><b>Demo checkout.</b> No real payment is taken and no food is being made. Use test card <code>4242 4242 4242 4242</code>, any future date, any 3 digits, or choose pay at pickup.</div>'+
     '<div class="co"><form id="coform" class="co-form" novalidate>'+
      '<section><h2>Who is picking up?</h2><div class="two"><label class="fld">Name<input name="name" required autocomplete="name"></label><label class="fld">Phone<input name="phone" type="tel" required autocomplete="tel"></label></div><label class="fld">Email <small>(for your receipt)</small><input name="email" type="email" required autocomplete="email"></label></section>'+
@@ -204,7 +230,10 @@
         if(!ex||mm<1||mm>12||yy*12+mm<now.getFullYear()*12+now.getMonth()+1){msg.textContent='Enter a future expiry date like 12/34.';return}
         if(!/^\d{3,4}$/.test(els['cvc'].value)){msg.textContent='Enter the 3 digit security code.';return}
       }
-      var w=els['when'].value,asap=w==='asap',tv=tipVal(),btn=$('#paybtn');btn.disabled=true;btn.textContent='Sending to the kitchen…';
+      var w=els['when'].value,asap=w==='asap';
+      var pt=asap?new Date(Date.now()+s.prepMin*60000):new Date(w),bad=lines.filter(function(l){return !L.menuAt(L.catMenu(l.it.cat),pt)||!l.it.available}).map(function(l){return l.it.name});
+      if(bad.length){msg.textContent=bad.join(', ')+(bad.length>1?' are':' is')+' not available at that pickup time ('+L.menuNote(L.catMenu(L.item(lines.filter(function(l){return l.it.name===bad[0]})[0].it.id).cat)).split(' · ')[0]+' menu). Remove '+(bad.length>1?'them':'it')+' or pick another time.';return}
+      var tv=tipVal(),btn=$('#paybtn');btn.disabled=true;btn.textContent='Sending to the kitchen…';
       setTimeout(function(){
         var pickup=asap?new Date(Date.now()+s.prepMin*60000).toISOString():w;
         var o=L.placeOrder({pickup:pickup,asap:asap,tipPct:tv.pct,tipFixed:tv.fixed,pay:pay,note:els['note'].value,customer:{name:els['name'].value.trim(),phone:els['phone'].value.trim(),email:els['email'].value.trim()}});
@@ -223,8 +252,11 @@
   }
 
   /* ---------- boot ---------- */
-  mountCart();renderMenu();renderFeatured();renderEvents();renderCheckout();renderCart();
+  var sig0=null;
+  function sig(){var o=L.orderState();return [o.ok,L.menuAt('breakfast'),L.menuAt('lunch')].join()}
+  setInterval(function(){var g=sig();if(sig0!==null&&g!==sig0){renderMenu();renderFeatured();renderCart()}sig0=g},30000);sig0=sig();
+  mountCart();renderMenu();renderFeatured();renderEvents();renderGallery();renderAbout();renderCheckout();renderCart();
   ['cart','items','settings'].forEach(function(n){d.addEventListener('lc:'+n,renderCart)});
-  addEventListener('storage',function(){renderCart();renderMenu();renderFeatured();renderEvents()});
+  addEventListener('storage',function(){renderCart();renderMenu();renderFeatured();renderEvents();renderGallery();renderAbout()});
   if(location.hash==='#cart')openCart();
 })();

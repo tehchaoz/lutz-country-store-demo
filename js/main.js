@@ -1,5 +1,17 @@
 (function(){
   var d=document,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* holiday theme (admin choice or by date) */
+  function applyTheme(){
+    var t=window.LC?LC.theme():'';if(t)d.documentElement.setAttribute('data-theme',t);else d.documentElement.removeAttribute('data-theme');
+    var fx=d.querySelector('.fx');if(fx)fx.remove();
+    if(!t||reduce)return;
+    fx=d.createElement('div');fx.className='fx';fx.setAttribute('aria-hidden','true');
+    var ch=t==='christmas'?['❄','❅','❆']:['🍂','🍁','🍃'],h='';
+    for(var i=0;i<16;i++)h+='<span style="left:'+(Math.random()*100).toFixed(1)+'%;animation-duration:'+(9+Math.random()*9).toFixed(1)+'s;animation-delay:-'+(Math.random()*14).toFixed(1)+'s;font-size:'+(14+Math.random()*14).toFixed(0)+'px">'+ch[i%ch.length]+'</span>';
+    fx.innerHTML=h;d.body.appendChild(fx);
+  }
+  applyTheme();d.addEventListener('lc:settings',applyTheme);
   var hdr=d.querySelector('.site-header'),burger=d.querySelector('.burger');
   var hero=d.querySelector('.hero');
   function onScroll(){

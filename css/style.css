@@ -46,7 +46,7 @@ p+p{margin-top:1em}
 .cart-count{position:absolute;top:-7px;right:-7px;min-width:21px;height:21px;border-radius:11px;background:var(--barn);color:#fff;font:800 .72rem/21px var(--body);text-align:center;padding:0 5px;transform:scale(0);transition:transform .25s}.cart-count.on{transform:scale(1)}
 .burger{display:none;order:4;background:none;border:2px solid currentColor;color:inherit;width:46px;height:46px;border-radius:50%;cursor:pointer}
 .burger span{display:block;width:18px;height:2px;background:currentColor;margin:5px auto;transition:.25s}
-@media (max-width:900px){
+@media (max-width:1180px){
   .burger{display:block}.cart-btn{margin-left:auto}
   .nav{position:fixed;inset:0;background:var(--navy);color:#fff;flex-direction:column;justify-content:center;gap:24px;transform:translateY(-100%);visibility:hidden;transition:transform .4s cubic-bezier(.7,0,.2,1),visibility 0s .4s;z-index:-1;margin:0}
   .nav a{font-size:1.5rem}.nav-open .nav{transform:none;visibility:visible;transition-delay:0s}
@@ -334,3 +334,65 @@ dl{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:.95rem;margin-t
 .catnav .cnb{display:none}
 .mcat{scroll-margin-top:170px}
 }
+
+/* about, gallery, loyalty */
+.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(24px,5vw,70px);align-items:center}
+.about-copy p{font-size:1.1rem;margin:0 0 18px}.about-copy .hero-cta{margin-top:26px}
+.about-logo{width:100%;max-width:420px;height:auto;justify-self:center;border-radius:50%;box-shadow:0 18px 44px rgba(60,40,10,.25)}
+.history{background:var(--paper)}
+.timeline{list-style:none;margin:0;padding:0 0 0 26px;border-left:4px dotted var(--barn);display:grid;gap:30px;max-width:720px}
+.timeline li{position:relative}.timeline .dot{position:absolute;left:-37px;top:6px;width:18px;height:18px;border-radius:50%;background:var(--sun);border:3px solid var(--ink)}
+.timeline h3{font-size:1.4rem;margin:0 0 4px}.timeline p{margin:0}
+.gallery{columns:3 260px;column-gap:18px}
+.gi{break-inside:avoid;margin:0 0 18px;background:var(--paper);border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:8px}
+.gi button{display:block;width:100%;border:0;padding:0;background:none;cursor:zoom-in}
+.gi img{width:100%;height:auto;display:block}
+.gi figcaption{font-family:var(--hand);font-size:1.3rem;text-align:center;padding:6px 4px 0;color:var(--mute)}
+dialog.lightbox{border:0;background:transparent;max-width:94vw;max-height:94vh;padding:0;color:#fff;text-align:center;overflow:visible}
+dialog.lightbox::backdrop{background:rgba(10,14,28,.88)}
+dialog.lightbox img{max-width:92vw;max-height:80vh;border:6px solid var(--paper);display:block;margin:0 auto}
+dialog.lightbox p{font-family:var(--hand);font-size:1.6rem;margin:10px 0 0}
+dialog.lightbox .x{position:absolute;top:-14px;right:-6px;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:var(--sun);font-size:1.6rem;cursor:pointer}
+.loyalty{background:var(--barn);color:#fff;padding:clamp(34px,5vw,56px) 0}
+.loy{display:flex;align-items:center;gap:clamp(16px,3vw,34px);flex-wrap:wrap}
+.loy img{border-radius:50%;border:3px solid var(--paper)}.loy>div{flex:1;min-width:240px}
+.loy h2{color:#fff;font-size:clamp(1.5rem,3vw,2.2rem);margin:4px 0 8px}.loy p{margin:0}.loy .eyebrow{color:var(--sun)}
+.btn.ghost.dark{color:var(--ink);border-color:var(--ink)}.btn.ghost.dark:hover{background:var(--ink);color:var(--cream)}
+/* holiday themes */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.fx span{position:absolute;top:-40px;opacity:.85;animation:fall linear infinite;will-change:transform}
+@keyframes fall{0%{transform:translate3d(0,-5vh,0) rotate(0)}50%{transform:translate3d(36px,55vh,0) rotate(180deg)}100%{transform:translate3d(-24px,108vh,0) rotate(360deg)}}
+html[data-theme=christmas] .fx span{color:#fff;text-shadow:0 0 6px rgba(160,200,255,.9)}
+.deco{display:none}
+html[data-theme=fall] .deco-fall{display:inline}html[data-theme=christmas] .deco-xmas{display:inline}
+.deco-xmas .bulbs circle{animation:blink 1.4s ease-in-out infinite;filter:drop-shadow(0 0 3px currentColor)}
+.deco-xmas .bulbs circle:nth-child(2n){animation-delay:.35s}.deco-xmas .bulbs circle:nth-child(3n){animation-delay:.7s}
+@keyframes blink{50%{opacity:.35}}
+html[data-theme=christmas] .lights circle:nth-of-type(4n+1){fill:#ff4b4b}html[data-theme=christmas] .lights circle:nth-of-type(4n+2){fill:#3ddc84}html[data-theme=christmas] .lights circle:nth-of-type(4n+3){fill:#ffd166}html[data-theme=christmas] .lights circle:nth-of-type(4n){fill:#4cc9f0}
+html[data-theme=fall] .lights circle:nth-of-type(3n+1){fill:#ff9b3d}html[data-theme=fall] .lights circle:nth-of-type(3n+2){fill:#ffc857}html[data-theme=fall] .lights circle:nth-of-type(3n){fill:#e4572e}
+html[data-theme=christmas] .loyalty{background:#1f6b3a}html[data-theme=fall] .loyalty{background:#a8461a}
+.theme-ribbon{display:none}
+@media (max-width:820px){.about-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.fx{display:none}}
+/* animated logo: door opens, lamp lights */
+.logo-anim{position:relative;display:inline-block;width:var(--la,52px);height:var(--la,52px);flex:none;perspective:calc(var(--la,52px)*1.6);vertical-align:middle}
+.logo-anim>img:first-child{width:100%;height:100%;display:block;border-radius:50%}
+.la-in,.la-door,.la-halo,.la-bulb{position:absolute;pointer-events:none}
+.la-in,.la-door{left:44.02%;top:32.05%;width:11.54%;height:26.92%}
+.la-in{background:linear-gradient(#251407,#3d240f)}
+.la-in::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 70%,#ffe9a8 0,#f2b84a 45%,#6b3d12 100%);opacity:0;animation:la-glow 6s ease-in-out infinite}
+.la-door{transform-origin:0 50%;animation:la-door 6s ease-in-out infinite;backface-visibility:visible}
+.la-bulb{left:84.2%;top:33.1%;width:2.7%;height:2.6%;border-radius:45% 45% 35% 35%;background:#ffe27a;opacity:0;box-shadow:0 0 calc(var(--la,52px)*.03) calc(var(--la,52px)*.012) #ffd24a;animation:la-glow 6s ease-in-out infinite}
+.la-halo{left:76%;top:25%;width:18.5%;height:18.5%;border-radius:50%;background:radial-gradient(circle,rgba(255,222,110,.75),rgba(255,222,110,0) 68%);opacity:0;animation:la-glow 6s ease-in-out infinite}
+@keyframes la-door{0%,10%{transform:rotateY(0)}22%,58%{transform:rotateY(68deg)}70%,100%{transform:rotateY(0)}}
+@keyframes la-glow{0%,14%{opacity:0}22%,60%{opacity:1}68%,100%{opacity:0}}
+.about-logo{width:min(420px,100%)!important;height:auto!important;aspect-ratio:1;justify-self:center;border-radius:50%;box-shadow:0 18px 44px rgba(60,40,10,.25)}
+.about-logo>img:first-child{width:100%;height:100%}
+.loy .logo-anim{border-radius:50%;border:3px solid var(--paper)}
+@media (prefers-reduced-motion:reduce){.la-door,.la-in::after,.la-bulb,.la-halo{animation:none}}
+.brand .logo-anim{width:var(--la);height:var(--la);display:inline-block;font-size:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+.brand .logo-anim>img{filter:none}.brand .logo-anim>img:first-child{width:100%;height:100%}
+.brand .logo-anim .la-door{width:11.54%;height:26.92%}.brand .logo-anim .la-in{width:11.54%;height:26.92%;display:block}
+.brand .logo-anim .la-bulb{width:2.7%;height:2.6%;display:block}.brand .logo-anim .la-halo{width:18.5%;height:18.5%;display:block}
+.nav a,.nav .cta{white-space:nowrap}.site-header .brand>span:not(.logo-anim){white-space:nowrap}
+@media (min-width:1181px){.nav{gap:clamp(12px,1.6vw,24px)}.nav a{font-size:.8rem;letter-spacing:.08em}}

@@ -4,14 +4,14 @@
    Menu items and prices were copied from the public Toast ordering page;
    items marked est:true have prices the owner should confirm. */
 (function(){
-  var K={items:'lc.items',cats:'lc.cats',settings:'lc.settings',orders:'lc.orders',cart:'lc.cart',pw:'lc.pw',events:'lc.events'};
+  var K={items:'lc.items',cats:'lc.cats',settings:'lc.settings',orders:'lc.orders',cart:'lc.cart',pw:'lc.pw',events:'lc.events',gallery:'lc.gallery'};
 
   var CATS=[
-    {id:'breakfast',name:'Breakfast Sandwiches'},{id:'plates',name:'Breakfast Plates'},{id:'sides',name:'Sides & Bread'},
-    {id:'soups',name:'Soups',note:'Weekday lunch menu'},{id:'salads',name:'Salads',note:'Weekday lunch menu'},{id:'sandwiches',name:'Lunch Sandwiches',note:'Weekday lunch menu'},
-    {id:'burgers',name:'Burgers',note:'Weekday lunch menu'},{id:'lsides',name:'Lunch Sides',note:'Weekday lunch menu'},{id:'baked',name:'Baked Goods'},
-    {id:'coffee',name:'Coffee'},{id:'special',name:'Specialty Lattes'},{id:'tea',name:'Tea & Lemonade'},
-    {id:'cold',name:'Water, Juice & Milk'},{id:'soda',name:'Sodas'}
+    {id:'breakfast',menu:'breakfast',name:'Breakfast Sandwiches'},{id:'plates',menu:'breakfast',name:'Breakfast Plates'},{id:'sides',menu:'breakfast',name:'Sides and Bread'},
+    {id:'soups',menu:'lunch',name:'Soups'},{id:'salads',menu:'lunch',name:'Salads'},{id:'sandwiches',menu:'lunch',name:'Lunch Sandwiches'},
+    {id:'burgers',menu:'lunch',name:'Burgers'},{id:'lsides',menu:'lunch',name:'Lunch Sides'},{id:'baked',name:'Baked Goods'},
+    {id:'coffee',name:'Coffee'},{id:'special',name:'Specialty Lattes'},{id:'tea',name:'Tea and Lemonade'},
+    {id:'cold',name:'Water, Juice and Milk'},{id:'soda',name:'Sodas'}
   ];
   function G(label,type,req,choices,est){return {label:label,type:type,required:!!req,max:0,est:!!est,choices:choices.map(function(c){return {n:c[0],p:c[1]||0}})}}
   function sz(a){return G('Size','single',true,a)}
@@ -23,7 +23,7 @@
   add('breakfast','Egg Kisser',9.95,{f:1});add('breakfast','Egg and Cheese Sandwich',9.95);
   add('breakfast','Bread and Meat Sandwich',7.95);add('breakfast','Bread and Cheese Sandwich',5.95);
   // plates
-  add('plates','2 Eggs, Meat & Toast Plate',8.95);add('plates','Biscuits and Gravy',10.95);
+  add('plates','2 Eggs, Meat and Toast Plate',8.95);add('plates','Biscuits and Gravy',10.95);
   add('plates','Pastrami Hash with Eggs',12.95);add('plates','Cuban French Toast',7.95);add('plates','Cuban Pancake',7.95);add('plates','2 Eggs and Toast',7.95);
   // lunch (Toast "Lunch Weekday" menu)
   add('soups','Lutz French Onion',9.5,{d:'Slow sautéed onions cooked to perfection in melted butter, added to our rich homemade veggie stock, layered with toasted bread and topped with melted, bubbly broiled Muenster and Swiss cheeses.'});
@@ -64,13 +64,13 @@
   add('coffee','Cafe Con Leche',4.25,{est:1});add('coffee','Doppio',3.5);add('coffee','Single Shot',1.25);add('coffee','Hot Chocolate',3.5,{est:1,opt:S2(.6)});
   add('special','Pumpkin Latte',6.25,{b:'Seasonal',est:1,opt:S2(.7)});add('special','Lava Cake Latte',6.25,{b:'Seasonal',est:1,opt:S2(.7)});
   add('special','Honey Nut Cheerios Latte',6.25,{b:'Seasonal',est:1,opt:S2(.7)});
-  // tea & lemonade
+  // tea and lemonade
   add('tea','Lemonade',4,{f:1,opt:sz([['12 oz',0],['16 oz',.5],['20 oz',1]])});
   ['Apple Lemonade','Blueberry Lemonade','Hibiscus Lemonade','Lavender Lemonade','Lemonade Berry Blast','Blue Dream Lemonade'].forEach(function(n){add('tea',n,4.75)});
   add('tea','Peach Lemonade',4.75,{out:1});
   add('tea','Iced Tea',4,{est:1,opt:S2(.6)});add('tea','Hot Tea',3.75,{est:1,opt:S2(.5)});add('tea','Spiced Chai Tea',4.95,{est:1});add('tea','Caramel Apple Chai',5.5,{est:1});
   // cold
-  add('cold','Bottled Water',1.5);add('cold','Orange Juice (12 oz)',3.99);add('cold','Milk',3.25);add('cold','Apple & Eve Juice',2.5);add('cold','Honest Kids Juice',1.5);
+  add('cold','Bottled Water',1.5);add('cold','Orange Juice (12 oz)',3.99);add('cold','Milk',3.25);add('cold','Apple and Eve Juice',2.5);add('cold','Honest Kids Juice',1.5);
   add('cold','Chocolate Milk Box',2);add('cold','Yoo-hoo Bottle',2.99);add('cold','Yoo-hoo Can',2.5,{out:1});
   add('cold','Coconut Water (11.1 oz)',2.5);add('cold','Coconut Water (33 oz)',5.5);
   // soda
@@ -94,7 +94,7 @@
   function post(it,gs){it.groups=it.groups.concat(gs)}
   ['Egg Kisser','Egg and Cheese Sandwich','Bread and Meat Sandwich','Bread and Cheese Sandwich'].forEach(function(n){post(by(n),[BREAD,BKADD])});
   post(by('Breakfast Sandwich Combo with Coffee'),[BKADD]);
-  post(by('2 Eggs, Meat & Toast Plate'),[G('Meat','single',true,[['Bacon',0],['Sausage patty',0]]),TOAST,PLADD]);
+  post(by('2 Eggs, Meat and Toast Plate'),[G('Meat','single',true,[['Bacon',0],['Sausage patty',0]]),TOAST,PLADD]);
   post(by('2 Eggs and Toast'),[TOAST,PLADD]);
   ['Biscuits and Gravy','Pastrami Hash with Eggs','Cuban French Toast','Cuban Pancake'].forEach(function(n){post(by(n),[PLADD])});
   var LSIDE=G('Add a side','multi',false,[['Fries',5.95],['Cole slaw',1.95],['Potato salad',1.95],['Cucumber salad',1.95]],true);
@@ -113,16 +113,21 @@
 
   // Sample on-site events (made up for the demo). The owner edits these in Admin > Events.
   var EVENTS=[
-    {id:'halloween-costume-party',title:'Spooky Saturday: Costume Parade & Trick-or-Treat',date:'2026-10-31',start:'10:00',end:'12:00',tag:'Halloween',note:'Free · all ages · costumes encouraged',
+    {id:'halloween-costume-party',title:'Spooky Saturday: Costume Parade and Trick-or-Treat',date:'2026-10-31',start:'10:00',end:'12:00',tag:'Halloween',note:'Free · all ages · costumes encouraged',
      desc:'Dress up and parade around the porch under the string lights. Kids get a treat bag, grown-ups get a pumpkin spice latte special, and the best costumes win a free hot chocolate.',published:true},
     {id:'fall-acoustic-morning',title:'Fall Folk Morning: Live Acoustic Music',date:'2026-11-14',start:'09:30',end:'11:30',tag:'Fall',note:'Free · seating on the porch',
      desc:'Local musicians play on the porch while you sip something warm. Try our Caramel Apple Chai and Pumpkin Latte, and grab a seat early.',published:true},
-    {id:'pie-and-cider-social',title:'Friendsgiving Pie & Cider Social',date:'2026-11-21',start:'10:00',end:'13:00',tag:'Thanksgiving',note:'Pie by the slice · cider by donation',
+    {id:'pie-and-cider-social',title:'Friendsgiving Pie and Cider Social',date:'2026-11-21',start:'10:00',end:'13:00',tag:'Thanksgiving',note:'Pie by the slice · cider by donation',
      desc:'A cozy neighborhood get-together before Thanksgiving. Homemade pies, warm apple cider and good company. Bring a friend and say hi to the neighbors.',published:true}
   ];
 
+  var GALLERY=[{id:'g1',src:'img/hero.jpg',cap:'The red barn out front'},{id:'g2',src:'img/mural-truck.jpg',cap:'The vintage truck and the good boy'},{id:'g3',src:'img/mural-train.jpg',cap:'The train rolling through the mural'},{id:'g4',src:'img/mural-wide.jpg',cap:'The whole mural at dusk'}];
   var DEF_HOURS=[{o:'07:00',c:'15:00'},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{closed:true},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{o:'07:00',c:'15:00'}]; // Sun..Sat
-  var SEED_SETTINGS={taxRate:7.5,tips:[0,10,15,20],prepMin:15,accepting:true,hours:DEF_HOURS,
+  var SEED_SETTINGS={taxRate:7.5,tips:[0,10,15,20],prepMin:15,accepting:true,hours:DEF_HOURS,breakfastEnd:'11:00',lunchStart:'11:00',lunchDays:[1,2,4,5],
+    theme:'auto',loyaltyUrl:'https://toast.app/r/lutz-country-store-19015-us-41/order',loyaltyText:'Join the rewards program with Toast and earn a little something every time you order.',
+    about:{title:'Bringing a little country back to Lutz',
+      body:['Lutz Country Store and Cafe sits on US-41 in Lutz, Florida, with the idea that a good morning should not be rushed. Breakfast sandwiches, Cuban French toast, biscuits and gravy, hot coffee and cold lemonade, then a weekday lunch of soups, salads, sandwiches and burgers.','The mural out front, a red barn, a vintage truck, a golden retriever and a train rolling through, is a nod to the railroad days of the town. Grab a seat on the porch under the string lights, or order ahead and swing by the window.'],
+      timeline:[{h:'The idea',t:'A little country store with a cafe counter, for the neighborhood on US-41.'},{h:'The build',t:'Neighbors watched the barn red store come together, one coat of paint at a time.'},{h:'Doors open',t:'Breakfast, coffee and cold lemonade, with a weekday lunch added to the board.'},{h:'Today',t:'Seasonal events on the porch, a regular crowd, and a counter where everybody knows your order.'}]},
     phone:'(813) 724-4515',address:'19015 US-41, Lutz, FL 33549'};
 
   function read(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
@@ -141,6 +146,14 @@
     /* settings */
     settings:function(){var s=Object.assign({},clone(SEED_SETTINGS),read(K.settings,{}));return s},
     saveSettings:function(s){var ok=write(K.settings,s);emit('settings');return ok},
+    /* gallery photos */
+    gallery:function(){return read(K.gallery,null)||clone(GALLERY)},
+    saveGallery:function(l){var ok=write(K.gallery,l);emit('gallery');return ok},
+    /* holiday theme: admin choice, or by date when set to auto */
+    theme:function(now){var t=LC.settings().theme||'auto';
+      if(t!=='auto')return t==='none'?'':t;
+      now=now||new Date();var m=now.getMonth()+1,d=now.getDate();
+      if(m===10||m===11)return 'fall';if(m===12&&d<=26)return 'christmas';return ''},
     /* events */
     events:function(opts){opts=opts||{};var l=read(K.events,null)||clone(EVENTS);
       if(!opts.all)l=l.filter(function(e){return e.published});
@@ -148,6 +161,29 @@
       return l.sort(function(a,b){return (a.date+(a.start||'')).localeCompare(b.date+(b.start||''))})},
     saveEvents:function(l){var ok=write(K.events,l);emit('events');return ok},
     resetEvents:function(){try{localStorage.removeItem(K.events)}catch(e){}emit('events')},
+    /* time-based ordering: breakfast until breakfastEnd, lunch from lunchStart on lunchDays */
+    catMenu:function(catId){var c=LC.cats().filter(function(x){return x.id===catId})[0];return (c&&c.menu)||'all'},
+    menuAt:function(menu,now){
+      now=now||new Date();var s=LC.settings(),m=now.getHours()*60+now.getMinutes(),dow=now.getDay();
+      if(menu==='breakfast')return m<hhmm(s.breakfastEnd||'11:00');
+      if(menu==='lunch')return (s.lunchDays||[1,2,4,5]).indexOf(dow)>-1&&m>=hhmm(s.lunchStart||'11:00');
+      return true},
+    menuNote:function(menu){var s=LC.settings(),D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      if(menu==='breakfast')return 'Breakfast · served until '+fmtT(hhmm(s.breakfastEnd||'11:00'));
+      if(menu==='lunch')return 'Lunch · from '+fmtT(hhmm(s.lunchStart||'11:00'))+' · '+(s.lunchDays||[1,2,4,5]).map(function(i){return D[i]}).join(', ');
+      return ''},
+    /* can the store take an online order right now? */
+    orderState:function(now){
+      now=now||new Date();var s=LC.settings(),st=LC.status(now),m=now.getHours()*60+now.getMinutes();
+      if(!s.accepting)return {ok:false,reason:'paused',text:'Online ordering is paused right now. Give us a call at '+s.phone+'.'};
+      if(!st.open)return {ok:false,reason:'closed',text:'We are closed right now. Ordering opens '+st.text.replace('Closed · opens ','')+'.'};
+      if(m+s.prepMin>st.closeMin-10)return {ok:false,reason:'late',text:'Online ordering is closed for the rest of today. See you next time we are open!'};
+      return {ok:true}},
+    /* why an item cannot be ordered right now ('' when it can) */
+    itemBlock:function(it,now){
+      var o=LC.orderState(now);if(!o.ok)return o.text;
+      var mn=LC.catMenu(it.cat);if(LC.menuAt(mn,now))return '';
+      var s=LC.settings();return mn==='breakfast'?'Breakfast ended at '+fmtT(hhmm(s.breakfastEnd||'11:00')):(((s.lunchDays||[]).indexOf((now||new Date()).getDay())<0)?'Lunch is not served today':'Lunch starts at '+fmtT(hhmm(s.lunchStart||'11:00')))},
     /* categories */
     cats:function(){return read(K.cats,null)||clone(CATS)},
     saveCats:function(c){var ok=write(K.cats,c);emit('items');return ok},
@@ -167,7 +203,7 @@
       return LC.saveItems(l)?it:null;
     },
     deleteItem:function(id){return LC.saveItems(LC.items({all:true}).filter(function(x){return x.id!==id}))},
-    resetMenu:function(){try{localStorage.removeItem(K.items);localStorage.removeItem(K.cats)}catch(e){}emit('items')},
+    resetMenu:function(){try{localStorage.removeItem(K.items);localStorage.removeItem(K.cats);}catch(e){}emit('items')},
     unit:function(it,opts){ // base price plus every selected add-on
       var p=it.price;opts=opts||{};
       (it.groups||[]).forEach(function(g){
@@ -211,7 +247,7 @@
     /* pickup time slots: returns [{v,label}] first is ASAP when open */
     slots:function(now){
       now=now||new Date();var s=LC.settings(),H=s.hours,out=[],st=LC.status(now),prep=s.prepMin;
-      for(var i=0;i<7&&out.length<14;i++){
+      for(var i=0;i<1&&out.length<14;i++){
         var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i),h=H[d.getDay()];if(!h||h.closed)continue;
         var o=hhmm(h.o),c=hhmm(h.c),start=o;
         if(i===0){var nm=now.getHours()*60+now.getMinutes()+prep;start=Math.max(o,Math.ceil(nm/15)*15)}
@@ -236,10 +272,10 @@
       orders.unshift(o);LC.saveOrders(orders);LC.clearCart();return o;
     },
     /* backup */
-    exportAll:function(){return JSON.stringify({version:1,exported:new Date().toISOString(),items:LC.items({all:true}),cats:LC.cats(),events:LC.events({all:true}),settings:LC.settings(),orders:LC.orders()},null,2)},
+    exportAll:function(){return JSON.stringify({version:1,exported:new Date().toISOString(),items:LC.items({all:true}),cats:LC.cats(),events:LC.events({all:true}),gallery:LC.gallery(),settings:LC.settings(),orders:LC.orders()},null,2)},
     importAll:function(txt){
       var d=JSON.parse(txt);if(!d||!Array.isArray(d.items))throw new Error('bad');
-      write(K.items,d.items);if(d.cats)write(K.cats,d.cats);if(d.events)write(K.events,d.events);if(d.settings)write(K.settings,d.settings);if(d.orders)write(K.orders,d.orders);
+      write(K.items,d.items);if(d.cats)write(K.cats,d.cats);if(d.events)write(K.events,d.events);if(d.gallery)write(K.gallery,d.gallery);if(d.settings)write(K.settings,d.settings);if(d.orders)write(K.orders,d.orders);
       emit('items');emit('settings');emit('orders');
     },
     storageKB:function(){var n=0;try{for(var k in localStorage)if(k.indexOf('lc.')===0)n+=localStorage[k].length*2}catch(e){}return Math.round(n/1024)},
