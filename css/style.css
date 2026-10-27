@@ -288,3 +288,7 @@ dl{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:.95rem;margin-t
 .band::before{content:"";position:absolute;inset:0;background:rgba(15,24,48,.5);z-index:-1}
 .band blockquote{font-family:var(--hand);font-weight:600;font-size:clamp(2.4rem,7vw,5.2rem);line-height:1.05;padding:0 var(--gut);max-width:16ch;text-shadow:0 4px 30px rgba(0,0,0,.6)}
 .band cite{display:block;font:800 .78rem var(--body);letter-spacing:.24em;margin-top:18px;color:var(--sun);text-transform:uppercase}
+.rail.rev .train{transform:translateX(calc(100vw - var(--p,0)*(100vw + 100%))) scaleX(-1)}
+.rail.rev{margin-top:0}
+.reviews{align-items:stretch}.review{display:flex;flex-direction:column}.review p{flex:1}
+@media (prefers-reduced-motion:reduce){.rail.rev .train{transform:translateX(30vw) scaleX(-1)}}
