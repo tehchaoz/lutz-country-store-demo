@@ -30,7 +30,7 @@
       el.style.transform='translate3d(0,'+((r.top+r.height/2-innerHeight/2)*parseFloat(el.dataset.par))+'px,0)';
     });
     d.querySelectorAll('.rail').forEach(function(r){
-      var b=r.getBoundingClientRect(),p=1-(b.top+b.height/2)/(innerHeight+b.height);p=Math.max(0,Math.min(1,p));r.style.setProperty('--p',p.toFixed(3));if(r.classList.contains('stop')){var t=Math.min(1,p/(r.classList.contains('early')?.3:.6));r.style.setProperty('--s',(1-Math.pow(1-t,3)).toFixed(3));r.classList.toggle('halt',t>=1)}
+      var b=r.getBoundingClientRect(),p=1-(b.top+b.height/2)/(innerHeight+b.height);p=Math.max(0,Math.min(1,p));r.style.setProperty('--p',p.toFixed(3));if(r.classList.contains('stop')){var e=r.classList.contains('early'),t=Math.max(0,Math.min(1,(p-(e?.03:.1))/(e?.26:.55)));r.style.setProperty('--s',(1-Math.pow(1-t,2)).toFixed(3));r.classList.toggle('halt',t>=1)}
     });
   }
   addEventListener('scroll',function(){requestAnimationFrame(onScroll)},{passive:true});onScroll();
