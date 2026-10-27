@@ -109,13 +109,22 @@
     L.cats().forEach(function(c){
       var its=L.items({cat:c.id}).filter(function(i){return !q||(i.name+' '+i.desc).toLowerCase().indexOf(q)>-1});
       if(!its.length)return;
-      html+='<section class="mcat" id="c-'+esc(c.id)+'"><h2>'+esc(c.name)+'</h2><div class="mlist">'+its.map(row).join('')+'</div></section>';
+      html+='<section class="mcat" id="c-'+esc(c.id)+'"><h2>'+esc(c.name)+'</h2>'+(c.note?'<p class="cnote">'+esc(c.note)+'</p>':'')+'<div class="mlist">'+its.map(row).join('')+'</div></section>';
       nav+='<a href="#c-'+esc(c.id)+'">'+esc(c.name)+'</a>';
     });
     root.innerHTML=html||'<div class="empty">'+barn+'<p>Nothing matches “'+esc(q)+'”.</p></div>';
-    var cn=$('#catnav');if(cn)cn.innerHTML='<div class="wrap">'+nav+'</div>';
+    var cn=$('#catnav');if(cn){cn.innerHTML='<div class="wrap">'+nav+'</div><button type="button" class="cnb prev" aria-label="Scroll categories left" hidden>‹</button><button type="button" class="cnb next" aria-label="Scroll categories right">›</button>';navArrows(cn)}
     var st=L.status(),cl=$('#closednote');if(cl){cl.hidden=st.open;cl.textContent=st.open?'':'We are closed right now ('+st.text.replace('Closed · ','')+'). You can still order and pick a pickup time for when we open.'}
     spy();
+  }
+  function navArrows(cn){
+    var w=$('.wrap',cn),pv=$('.prev',cn),nx=$('.next',cn);
+    function upd(){var max=w.scrollWidth-w.clientWidth;pv.hidden=w.scrollLeft<4;nx.hidden=max<4||w.scrollLeft>max-4}
+    pv.onclick=function(){w.scrollBy({left:-w.clientWidth*.7,behavior:'smooth'})};
+    nx.onclick=function(){w.scrollBy({left:w.clientWidth*.7,behavior:'smooth'})};
+    w.addEventListener('scroll',upd,{passive:true});
+    w.addEventListener('wheel',function(e){if(Math.abs(e.deltaX)<Math.abs(e.deltaY)&&w.scrollWidth>w.clientWidth){var max=w.scrollWidth-w.clientWidth,n=w.scrollLeft+e.deltaY;if((e.deltaY>0&&w.scrollLeft<max)||(e.deltaY<0&&w.scrollLeft>0)){w.scrollLeft=Math.max(0,Math.min(max,n));e.preventDefault()}}},{passive:false});
+    upd();setTimeout(upd,300);addEventListener('resize',upd);
   }
   var lastCat=null;
   function spy(){

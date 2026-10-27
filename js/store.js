@@ -8,6 +8,8 @@
 
   var CATS=[
     {id:'breakfast',name:'Breakfast Sandwiches'},{id:'plates',name:'Breakfast Plates'},{id:'sides',name:'Sides & Bread'},
+    {id:'soups',name:'Soups',note:'Weekday lunch menu'},{id:'salads',name:'Salads',note:'Weekday lunch menu'},{id:'sandwiches',name:'Lunch Sandwiches',note:'Weekday lunch menu'},
+    {id:'burgers',name:'Burgers',note:'Weekday lunch menu'},{id:'lsides',name:'Lunch Sides',note:'Weekday lunch menu'},{id:'baked',name:'Baked Goods'},
     {id:'coffee',name:'Coffee'},{id:'special',name:'Specialty Lattes'},{id:'tea',name:'Tea & Lemonade'},
     {id:'cold',name:'Water, Juice & Milk'},{id:'soda',name:'Sodas'}
   ];
@@ -21,8 +23,34 @@
   add('breakfast','Egg Kisser',9.95,{f:1});add('breakfast','Egg and Cheese Sandwich',9.95);
   add('breakfast','Bread and Meat Sandwich',7.95);add('breakfast','Bread and Cheese Sandwich',5.95);
   // plates
-  add('plates','2 Eggs, Meat & Toast Plate',8.95);add('plates','Biscuits and Gravy',10.95,{f:1});
-  add('plates','Pastrami Hash with Eggs',12.95,{f:1});add('plates','Cuban French Toast',7.95,{f:1});add('plates','Cuban Pancake',7.95);add('plates','2 Eggs and Toast',7.95);
+  add('plates','2 Eggs, Meat & Toast Plate',8.95);add('plates','Biscuits and Gravy',10.95);
+  add('plates','Pastrami Hash with Eggs',12.95);add('plates','Cuban French Toast',7.95);add('plates','Cuban Pancake',7.95);add('plates','2 Eggs and Toast',7.95);
+  // lunch (Toast "Lunch Weekday" menu)
+  add('soups','Lutz French Onion',9.5,{d:'Slow sautéed onions cooked to perfection in melted butter, added to our rich homemade veggie stock, layered with toasted bread and topped with melted, bubbly broiled Muenster and Swiss cheeses.'});
+  add('soups','New England Clam Chowda’',9.5,{out:1,d:'Tender sea clams in a creamy chowda with potatoes, topped with crispy bacon and parsley.'});
+  add('soups','Grandma Blankas’ Chicken Soup',8.95,{d:'Homemade chicken soup the old-fashioned way, with fresh vegetables and chicken to make it a meal!'});
+  add('salads','Caesar Salad',10.95,{d:'Fresh crisp romaine tossed in our homemade traditional Caesar dressing, with homemade croutons and freshly shaved parmesan.'});
+  add('salads','Mixed Greens',10.95,{d:'Mixed fresh greens with carrots, cucumber, chickpeas and tomato, tossed in our house lemon basil dressing with a touch of local honey.'});
+  add('sandwiches','Cuban Sandwich',15.95,{f:1,b:'Fan favorite',d:'Tampa! The originator of the cuban sandwich! Made the traditional way: slow roasted pork, ham, salami and pickles with a mayo mustard sauce, pressed to crisp perfection.'});
+  add('sandwiches','Pastrami Sandwich',17.95,{d:'Flown in from Chicago and finished in house with dijon mustard on the bread. No need to add anything else, it is just that tender and delicious. Melted Swiss and toasted bread optional, but also delicious!'});
+  add('sandwiches','Tuna',13.95,{d:'Homemade tuna salad with crisp sprouts and sliced cucumbers, served on a kaiser roll.'});
+  add('sandwiches','Chicken Chimi',13.95,{d:'Fresh grilled chicken breast with chimichurri and melted muenster cheese.'});
+  add('sandwiches','Chicken Salad Sandwich',13.95,{d:'Homemade freshly roasted chicken salad with mayo and pickles, served on toasted white artisan bread brushed with roasted garlic chimichurri.'});
+  add('sandwiches','Grilled Cheese',11.95,{d:'Grilled cheese on white artisan bread.'});
+  add('sandwiches','BLT',12.95);
+  add('sandwiches','Salmon Sandwich',14.95,{out:1});
+  add('burgers','Smash Burger',11.95,{f:1,b:'Fan favorite'});
+  add('burgers','Rio Max',14.95,{d:'A piece of Lutz history: two fresh quarter pound beef patties smashed, with crisp lettuce, tomato, onion, pickles, melted American and Rio Max secret sauce, served on a butter toasted brioche bun.'});
+  add('burgers','Patty’s Patty Melt',14.95);
+  add('burgers','Build Your Own Burger',10.95,{d:'Perfectly smashed patty on a butter toasted brioche bun, with only what YOU want on it.'});
+  add('lsides','Fries',5.95);add('lsides','Cole Slaw',1.95);add('lsides','Potato Salad',1.95);add('lsides','Cucumber Salad',1.95);
+  add('lsides','Side Chicken Salad',2.95);add('lsides','Chicken Salad (Large Side)',5.95,{out:1});
+  add('lsides','Hot Smoked Salmon Salad',3.95);add('lsides','Smoked Salmon Side',4.95,{out:1});add('lsides','Side Tuna Salad',3.95);add('lsides','Side Aioli',.75,{out:1});
+  add('baked','Blueberry Muffin (Large)',5.25);add('baked','Chocolate Chip Muffin (Large)',5.25);add('baked','Banana Nut Muffin',4.95);
+  add('baked','Double Chocolate Muffin',4.95,{out:1});add('baked','French Toast Muffin (Large)',5.25,{out:1});add('baked','Cream Cheese Muffin',4.95,{out:1});
+  add('baked','Coffee Cake',4.5);add('baked','Pumpkin Bread',4.25);add('baked','Blondie',3.95);add('baked','Double Chocolate Chip Brownie',3.95);
+  add('baked','Vegan Chocolate Chip',3.95);add('baked','Chocolate Chip Cookie',1.95,{out:1});
+  add('baked','GF Chocolate Chip',3.25);add('baked','GF Blueberry Muffin',3.75);add('baked','GF Brownie with Nuts',1.25);
   // sides
   add('sides','Golden Hash Browns',4.95);add('sides','Cuban Toast, Pressed',3);add('sides','Cuban Toast, Grilled',3);
   add('sides','Croissant',3.99);add('sides','Biscuit',3.99);add('sides','Rye',2.5);add('sides','White Bread',2.5);add('sides','Wheat',2.5);add('sides','Kaiser',2.5);
@@ -38,7 +66,7 @@
   add('special','Honey Nut Cheerios Latte',6.25,{b:'Seasonal',est:1,opt:S2(.7)});
   // tea & lemonade
   add('tea','Lemonade',4,{f:1,opt:sz([['12 oz',0],['16 oz',.5],['20 oz',1]])});
-  ['Apple Lemonade','Blueberry Lemonade','Hibiscus Lemonade','Lavender Lemonade','Lemonade Berry Blast'].forEach(function(n){add('tea',n,4.75)});
+  ['Apple Lemonade','Blueberry Lemonade','Hibiscus Lemonade','Lavender Lemonade','Lemonade Berry Blast','Blue Dream Lemonade'].forEach(function(n){add('tea',n,4.75)});
   add('tea','Peach Lemonade',4.75,{out:1});
   add('tea','Iced Tea',4,{est:1,opt:S2(.6)});add('tea','Hot Tea',3.75,{est:1,opt:S2(.5)});add('tea','Spiced Chai Tea',4.95,{est:1});add('tea','Caramel Apple Chai',5.5,{est:1});
   // cold
@@ -69,6 +97,12 @@
   post(by('2 Eggs, Meat & Toast Plate'),[G('Meat','single',true,[['Bacon',0],['Sausage patty',0]]),TOAST,PLADD]);
   post(by('2 Eggs and Toast'),[TOAST,PLADD]);
   ['Biscuits and Gravy','Pastrami Hash with Eggs','Cuban French Toast','Cuban Pancake'].forEach(function(n){post(by(n),[PLADD])});
+  var LSIDE=G('Add a side','multi',false,[['Fries',5.95],['Cole slaw',1.95],['Potato salad',1.95],['Cucumber salad',1.95]],true);
+  var BTOP=G('Toppings','multi',false,[['Cheese',1],['Bacon',3.99],['Fried egg',1.5],['Lettuce',0],['Tomato',0],['Onion',0],['Pickles',0]],true);
+  var SPROT=G('Add protein','multi',false,[['Chicken salad',2.95],['Hot smoked salmon salad',3.95],['Tuna salad',3.95]],true);
+  ['Cuban Sandwich','Pastrami Sandwich','Tuna','Chicken Chimi','Chicken Salad Sandwich','Grilled Cheese','BLT','Smash Burger','Rio Max','Patty’s Patty Melt'].forEach(function(n){post(by(n),[LSIDE])});
+  post(by('Build Your Own Burger'),[BTOP,LSIDE]);
+  ['Caesar Salad','Mixed Greens'].forEach(function(n){post(by(n),[SPROT])});
   I.forEach(function(it){
     var n=it.name,hot=/^(Latte|Mocha|Americano|Cafe Con Leche|Spiced Chai Tea|Caramel Apple Chai)$/.test(n)||it.cat==='special';
     if(hot)pre(it,[TEMP]);
