@@ -407,3 +407,10 @@ html[data-theme=newyear] .lights circle:nth-of-type(2n){fill:#ffd166}html[data-t
 html[data-theme=july4] .lights circle:nth-of-type(3n+1){fill:#ff4b4b}html[data-theme=july4] .lights circle:nth-of-type(3n+2){fill:#fff}html[data-theme=july4] .lights circle:nth-of-type(3n){fill:#5b8def}
 html[data-theme=valentines] .lights circle:nth-of-type(2n){fill:#ff6b95}html[data-theme=valentines] .lights circle:nth-of-type(2n+1){fill:#ffd1dc}
 html[data-theme=newyear] .loyalty{background:#1b2347}html[data-theme=july4] .loyalty{background:#1d3a8a}html[data-theme=valentines] .loyalty{background:#b3205a}
+
+/* station train: same speed as the other trains, it just stops at the station */
+.rail.stop{--stop:calc(100vw - var(--st) + 15px)}
+.rail.stop .train{transform:translateX(min(calc(var(--p,0)*(100vw + 100%) - 100%),calc(var(--stop) - 100%)))}
+.rail.stop .station{right:auto;left:calc(var(--stop) - 15px)}
+@media (max-width:700px){.rail.stop .train{width:min(520px,92vw)}}
+@media (prefers-reduced-motion:reduce){.rail.stop .train{transform:translateX(calc(var(--stop) - 100%))}}
