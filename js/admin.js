@@ -269,7 +269,7 @@
   });
 
   /* ---------- site (theme, about, rewards) ---------- */
-  var TLN={'':'No theme right now','fall':'Fall and Thanksgiving (leaves and a turkey on the train)','christmas':'Christmas (lights and presents on the train)'};
+  var TLN={'':'No theme right now','fall':'Fall and Thanksgiving (leaves and a turkey on the train)','christmas':'Christmas (lights and presents on the train)','newyear':'New Year (fireworks)','valentines':"Valentine's Day (hearts)",'july4':'Fourth of July (fireworks and bunting)'};
   function tlRow(x){return '<div class="tlrow"><input data-t="h" placeholder="Title" value="'+esc(x.h||'')+'" maxlength="60"><textarea data-t="t" rows="2" placeholder="What happened" maxlength="240">'+esc(x.t||'')+'</textarea><button type="button" class="ib" data-t="rm" aria-label="Remove milestone">×</button></div>'}
   function renderSite(){
     var s=L.settings(),a=s.about||{},f=$('#siteform').elements;

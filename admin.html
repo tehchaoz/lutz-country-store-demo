@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#0f1830"><link rel="icon" href="img/barn.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20"><link rel="stylesheet" href="css/admin.css?v=20"></head>
+<link rel="stylesheet" href="css/style.css?v=21"><link rel="stylesheet" href="css/admin.css?v=21"></head>
 <body class="admin">
 <div id="login" class="login" hidden>
   <form id="loginform" class="login-box" autocomplete="off">
@@ -52,8 +52,8 @@
       <h2>Site</h2>
       <form id="siteform" class="set">
         <h3>Holiday theme</h3>
-        <label>Theme<select name="theme"><option value="auto">Automatic by date (Fall and Thanksgiving Oct 1 to Nov 30, Christmas Dec 1 to Dec 26)</option><option value="none">Off</option><option value="fall">Fall and Thanksgiving (always on)</option><option value="christmas">Christmas (always on)</option></select></label>
-        <p class="fine" id="themenow"></p>
+        <label>Theme<select name="theme"><option value="auto">Automatic by date (see schedule below)</option><option value="none">Off</option><option value="fall">Fall and Thanksgiving (always on)</option><option value="christmas">Christmas (always on)</option><option value="newyear">New Year (fireworks, always on)</option><option value="valentines">Valentine's Day (always on)</option><option value="july4">Fourth of July (fireworks, always on)</option></select></label>
+        <p class="fine" id="themenow"></p><p class="fine">Automatic schedule: Valentine's Day Feb 1 to 15 · Fourth of July Jul 1 to 5 · Fall and Thanksgiving Oct 1 to Nov 30 · Christmas Dec 1 to 26 · New Year Dec 27 to Jan 3. Other days have no theme.</p>
         <h3>Rewards signup</h3>
         <label>Signup link <small>Paste the Toast rewards signup link here</small><input name="loyaltyUrl" type="url" placeholder="https://"></label>
         <label>Message<textarea name="loyaltyText" rows="2" maxlength="200"></textarea></label>
@@ -124,5 +124,5 @@
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="js/store.js?v=20"></script><script src="js/admin.js?v=20"></script>
+<script src="js/store.js?v=21"></script><script src="js/admin.js?v=21"></script>
 </body></html>

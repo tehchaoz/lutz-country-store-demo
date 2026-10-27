@@ -153,7 +153,8 @@
     theme:function(now){var t=LC.settings().theme||'auto';
       if(t!=='auto')return t==='none'?'':t;
       now=now||new Date();var m=now.getMonth()+1,d=now.getDate();
-      if(m===10||m===11)return 'fall';if(m===12&&d<=26)return 'christmas';return ''},
+      if(m===10||m===11)return 'fall';if(m===12&&d<=26)return 'christmas';
+      if((m===12&&d>=27)||(m===1&&d<=3))return 'newyear';if(m===2&&d<=15)return 'valentines';if(m===7&&d<=5)return 'july4';return ''},
     /* events */
     events:function(opts){opts=opts||{};var l=read(K.events,null)||clone(EVENTS);
       if(!opts.all)l=l.filter(function(e){return e.published});

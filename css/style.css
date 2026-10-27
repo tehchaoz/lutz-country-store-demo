@@ -396,3 +396,14 @@ html[data-theme=christmas] .loyalty{background:#1f6b3a}html[data-theme=fall] .lo
 .brand .logo-anim .la-bulb{width:2.7%;height:2.6%;display:block}.brand .logo-anim .la-halo{width:18.5%;height:18.5%;display:block}
 .nav a,.nav .cta{white-space:nowrap}.site-header .brand>span:not(.logo-anim){white-space:nowrap}
 @media (min-width:1181px){.nav{gap:clamp(12px,1.6vw,24px)}.nav a{font-size:.8rem;letter-spacing:.08em}}
+
+/* more themes */
+html[data-theme=newyear] .deco-newyear,html[data-theme=july4] .deco-july4,html[data-theme=valentines] .deco-valentines{display:inline}
+.station{overflow:visible}
+.fx .fwb{position:absolute;width:0;height:0}
+.fx .fwb i{position:absolute;left:0;top:0;width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);animation:fwb 1.5s ease-out forwards}
+@keyframes fwb{0%{transform:translate(0,0) scale(1.2);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+html[data-theme=newyear] .lights circle:nth-of-type(2n){fill:#ffd166}html[data-theme=newyear] .lights circle:nth-of-type(2n+1){fill:#e8edf5}
+html[data-theme=july4] .lights circle:nth-of-type(3n+1){fill:#ff4b4b}html[data-theme=july4] .lights circle:nth-of-type(3n+2){fill:#fff}html[data-theme=july4] .lights circle:nth-of-type(3n){fill:#5b8def}
+html[data-theme=valentines] .lights circle:nth-of-type(2n){fill:#ff6b95}html[data-theme=valentines] .lights circle:nth-of-type(2n+1){fill:#ffd1dc}
+html[data-theme=newyear] .loyalty{background:#1b2347}html[data-theme=july4] .loyalty{background:#1d3a8a}html[data-theme=valentines] .loyalty{background:#b3205a}

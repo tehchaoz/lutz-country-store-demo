@@ -2,14 +2,22 @@
   var d=document,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* holiday theme (admin choice or by date) */
+  var fwT=null,FW={newyear:['#ffd166','#e8edf5','#f4a261','#fff'],july4:['#ff4b4b','#fff','#5b8def','#ffd166'],valentines:[]};
+  function burst(fx,cols){
+    var b=d.createElement('div');b.className='fwb';b.style.left=(10+Math.random()*80)+'%';b.style.top=(8+Math.random()*38)+'%';
+    var c=cols[Math.floor(Math.random()*cols.length)],h='',n=18;
+    for(var i=0;i<n;i++){var a=i/n*6.283,r=60+Math.random()*50;h+='<i style="--c:'+c+';--dx:'+Math.round(Math.cos(a)*r)+'px;--dy:'+Math.round(Math.sin(a)*r)+'px"></i>'}
+    b.innerHTML=h;fx.appendChild(b);setTimeout(function(){b.remove()},1600);
+  }
   function applyTheme(){
     var t=window.LC?LC.theme():'';if(t)d.documentElement.setAttribute('data-theme',t);else d.documentElement.removeAttribute('data-theme');
-    var fx=d.querySelector('.fx');if(fx)fx.remove();
+    var fx=d.querySelector('.fx');if(fx)fx.remove();clearInterval(fwT);
     if(!t||reduce)return;
     fx=d.createElement('div');fx.className='fx';fx.setAttribute('aria-hidden','true');
-    var ch=t==='christmas'?['❄','❅','❆']:['🍂','🍁','🍃'],h='';
-    for(var i=0;i<16;i++)h+='<span style="left:'+(Math.random()*100).toFixed(1)+'%;animation-duration:'+(9+Math.random()*9).toFixed(1)+'s;animation-delay:-'+(Math.random()*14).toFixed(1)+'s;font-size:'+(14+Math.random()*14).toFixed(0)+'px">'+ch[i%ch.length]+'</span>';
+    var ch={christmas:['❄','❅','❆'],fall:['🍂','🍁','🍂','🍁'],valentines:['💗','💕','❤️','💖']}[t],h='';
+    if(ch)for(var i=0;i<16;i++)h+='<span style="left:'+(Math.random()*100).toFixed(1)+'%;animation-duration:'+(9+Math.random()*9).toFixed(1)+'s;animation-delay:-'+(Math.random()*14).toFixed(1)+'s;font-size:'+(14+Math.random()*14).toFixed(0)+'px">'+ch[i%ch.length]+'</span>';
     fx.innerHTML=h;d.body.appendChild(fx);
+    if(FW[t]&&FW[t].length){burst(fx,FW[t]);fwT=setInterval(function(){burst(fx,FW[t]);if(Math.random()<.5)setTimeout(function(){burst(fx,FW[t])},350)},1900)}
   }
   applyTheme();d.addEventListener('lc:settings',applyTheme);
   var hdr=d.querySelector('.site-header'),burger=d.querySelector('.burger');
