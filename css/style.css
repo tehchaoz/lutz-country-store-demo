@@ -326,3 +326,11 @@ dl{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:.95rem;margin-t
 .etag{display:inline-block;font:800 .66rem var(--body);letter-spacing:.16em;text-transform:uppercase;background:var(--sun);color:var(--ink);padding:3px 10px;border-radius:999px}
 .noev{grid-column:1/-1;text-align:center;opacity:.85}
 @media (max-width:480px){.event{flex-direction:column}.edate{width:auto;flex-direction:row;gap:10px;align-items:baseline;justify-content:center;padding:8px 14px}.edate .d{margin:0;font-size:1.6rem}}
+/* desktop: full-width category bar, chips wrap so nothing needs scrolling */
+@media (min-width:1100px){
+.catnav{top:62px}
+.catnav .wrap{max-width:none;flex-wrap:wrap;justify-content:center;overflow:visible;gap:7px 8px;padding:10px clamp(16px,3vw,48px)}
+.catnav a{font-size:.74rem;padding:7px 13px;letter-spacing:.06em}
+.catnav .cnb{display:none}
+.mcat{scroll-margin-top:170px}
+}
