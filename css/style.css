@@ -292,3 +292,4 @@ dl{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:.95rem;margin-t
 .rail.rev{margin-top:0}
 .reviews{align-items:stretch}.review{display:flex;flex-direction:column}.review p{flex:1}
 @media (prefers-reduced-motion:reduce){.rail.rev .train{transform:translateX(30vw) scaleX(-1)}}
+.rail.rev{height:150px;background:linear-gradient(180deg,var(--cream) calc(100% - 36px),#d9cdb0 0)}
