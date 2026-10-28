@@ -123,7 +123,7 @@
 
   var GALLERY=[{id:'g1',src:'img/hero.jpg',cap:'The red barn out front'},{id:'g2',src:'img/mural-truck.jpg',cap:'The vintage truck and the good boy'},{id:'g3',src:'img/mural-train.jpg',cap:'The train rolling through the mural'},{id:'g4',src:'img/mural-wide.jpg',cap:'The whole mural at dusk'}];
   var DEF_HOURS=[{o:'07:00',c:'15:00'},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{closed:true},{o:'06:15',c:'15:00'},{o:'06:15',c:'15:00'},{o:'07:00',c:'15:00'}]; // Sun..Sat
-  var SEED_SETTINGS={taxRate:7.5,tips:[0,10,15,20],prepMin:15,accepting:true,hours:DEF_HOURS,breakfastEnd:'11:00',lunchStart:'11:00',lunchDays:[1,2,4,5],
+  var SEED_SETTINGS={taxRate:7.5,tips:[0,10,15,20],prepMin:15,accepting:true,hours:DEF_HOURS,breakfastEnd:'11:00',lunchStart:'10:45',lunchDays:[1,2,4,5],
     theme:'auto',loyaltyUrl:'https://order.toasttab.com/online/lutz-country-store-19015-us-41',loyaltyText:'Join the rewards program with Toast and earn a little something every time you order.',
     about:{title:'Bringing a little country back to Lutz',
       body:['Lutz Country Store and Cafe sits on US-41 in Lutz, Florida, with the idea that a good morning should not be rushed. Breakfast sandwiches, Cuban French toast, biscuits and gravy, hot coffee and cold lemonade, then a weekday lunch of soups, salads, sandwiches and burgers.','The mural out front, a red barn, a vintage truck, a golden retriever and a train rolling through, is a nod to the railroad days of the town. Grab a seat on the porch under the string lights, or order ahead and swing by the window.'],
@@ -167,7 +167,7 @@
     menuAt:function(menu,now){
       now=now||new Date();var s=LC.settings(),m=now.getHours()*60+now.getMinutes(),dow=now.getDay();
       if(menu==='breakfast')return m<hhmm(s.breakfastEnd||'11:00');
-      if(menu==='lunch')return (s.lunchDays||[1,2,4,5]).indexOf(dow)>-1&&m>=hhmm(s.lunchStart||'11:00');
+      if(menu==='lunch')return (s.lunchDays||[1,2,4,5]).indexOf(dow)>-1&&m>=hhmm(s.lunchStart||'10:45');
       return true},
     /* the moment whose menu the site should show: now while open, else the next opening */
     menuTime:function(now){
@@ -179,7 +179,7 @@
     catShown:function(catId,now){return LC.menuAt(LC.catMenu(catId),LC.menuTime(now))},
     menuNote:function(menu){var s=LC.settings(),D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       if(menu==='breakfast')return 'Breakfast · served until '+fmtT(hhmm(s.breakfastEnd||'11:00'));
-      if(menu==='lunch')return 'Lunch · from '+fmtT(hhmm(s.lunchStart||'11:00'))+' · '+(s.lunchDays||[1,2,4,5]).map(function(i){return D[i]}).join(', ');
+      if(menu==='lunch')return 'Lunch · from '+fmtT(hhmm(s.lunchStart||'10:45'))+' · '+(s.lunchDays||[1,2,4,5]).map(function(i){return D[i]}).join(', ');
       return ''},
     /* can the store take an online order right now? */
     orderState:function(now){
@@ -192,7 +192,7 @@
     itemBlock:function(it,now){
       var o=LC.orderState(now);if(!o.ok)return o.text;
       var mn=LC.catMenu(it.cat);if(LC.menuAt(mn,now))return '';
-      var s=LC.settings();return mn==='breakfast'?'Breakfast ended at '+fmtT(hhmm(s.breakfastEnd||'11:00')):(((s.lunchDays||[]).indexOf((now||new Date()).getDay())<0)?'Lunch is not served today':'Lunch starts at '+fmtT(hhmm(s.lunchStart||'11:00')))},
+      var s=LC.settings();return mn==='breakfast'?'Breakfast ended at '+fmtT(hhmm(s.breakfastEnd||'11:00')):(((s.lunchDays||[]).indexOf((now||new Date()).getDay())<0)?'Lunch is not served today':'Lunch starts at '+fmtT(hhmm(s.lunchStart||'10:45')))},
     /* categories */
     cats:function(){return read(K.cats,null)||clone(CATS)},
     saveCats:function(c){var ok=write(K.cats,c);emit('items');return ok},
