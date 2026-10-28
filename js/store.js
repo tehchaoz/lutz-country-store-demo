@@ -130,6 +130,9 @@
       timeline:[{h:'The idea',t:'A little country store with a cafe counter, for the neighborhood on US-41.'},{h:'The build',t:'Neighbors watched the barn red store come together, one coat of paint at a time.'},{h:'Doors open',t:'Breakfast, coffee and cold lemonade, with a weekday lunch added to the board.'},{h:'Today',t:'Seasonal events on the porch, a regular crowd, and a counter where everybody knows your order.'}]},
     phone:'(813) 724-4515',address:'19015 US-41, Lutz, FL 33549'};
 
+  var DEFAULT_PW='pbkdf2$100000$1ac8db82ef449cbd25f8277fc5d47066$45ffdc062860ea00ff211f38151e3c7438418ac7ea49aeab856c81a228a9130d';
+  function bytesHex(u){return [].slice.call(u).map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('')}
+  function hexBytes(h){var o=new Uint8Array(h.length/2);for(var i=0;i<o.length;i++)o[i]=parseInt(h.substr(i*2,2),16);return o}
   function read(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
   var lastErr=null;
   function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));lastErr=null;return true}catch(e){lastErr=e;return false}}
@@ -288,12 +291,20 @@
       emit('items');emit('settings');emit('orders');
     },
     storageKB:function(){var n=0;try{for(var k in localStorage)if(k.indexOf('lc.')===0)n+=localStorage[k].length*2}catch(e){}return Math.round(n/1024)},
-    /* admin password: demo default 'Coldbrew' until changed in Settings */
-    hash:function(s){
-      if(!(window.crypto&&crypto.subtle))return Promise.resolve('p:'+btoa(unescape(encodeURIComponent(s))));
-      return crypto.subtle.digest('SHA-256',new TextEncoder().encode('lc|'+s)).then(function(b){return [].slice.call(new Uint8Array(b)).map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('')});
+    /* admin password: stored as a salted PBKDF2 hash, never as text. Starts as DEFAULT_PW until changed in Settings. */
+    hash:function(pw,saltHex,iters){
+      if(!(window.crypto&&crypto.subtle))return Promise.reject(new Error('nocrypto'));
+      var salt=saltHex?hexBytes(saltHex):crypto.getRandomValues(new Uint8Array(16));iters=iters||100000;
+      return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits'])
+        .then(function(k){return crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:iters},k,256)})
+        .then(function(b){return 'pbkdf2$'+iters+'$'+bytesHex(salt)+'$'+bytesHex(new Uint8Array(b))});
     },
-    checkPw:function(pw){var st=read(K.pw,null);return Promise.all([LC.hash(pw),st?Promise.resolve(st):LC.hash('Coldbrew')]).then(function(r){return r[0]===r[1]})},
-    setPw:function(h){write(K.pw,h)}
+    checkPw:function(pw){
+      var st=read(K.pw,null)||DEFAULT_PW,p=String(st).split('$');
+      if(p[0]!=='pbkdf2')return Promise.resolve(false);
+      return LC.hash(pw,p[2],+p[1]).then(function(h){return h===st});
+    },
+    setPw:function(pw){return LC.hash(pw).then(function(h){return write(K.pw,h)})},
+    isDefaultPw:function(){return !read(K.pw,null)}
   };
 })();

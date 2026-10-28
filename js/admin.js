@@ -12,9 +12,15 @@
   /* ---------- login ---------- */
   var authed=false;try{authed=sessionStorage.getItem('lc.auth')==='1'}catch(e){}
   function showApp(){$('#login').hidden=true;$('#app').hidden=false;renderAll()}
+  function tries(){try{return JSON.parse(localStorage.getItem('lc.try')||'{}')}catch(e){return {}}}
   $('#loginform').addEventListener('submit',function(e){
     e.preventDefault();var msg=$('#loginmsg');msg.textContent='';
-    L.checkPw($('#pw').value).then(function(ok){if(ok){try{sessionStorage.setItem('lc.auth','1')}catch(e){}$('#pw').value='';showApp()}else msg.textContent='That is not the password.'});
+    var t=tries(),now=Date.now();if(t.until&&now<t.until){msg.textContent='Too many tries. Wait '+Math.ceil((t.until-now)/1000)+' seconds and try again.';return}
+    L.checkPw($('#pw').value).then(function(ok){
+      if(ok){try{sessionStorage.setItem('lc.auth','1');localStorage.removeItem('lc.try')}catch(e){}$('#pw').value='';showApp();
+        if(L.isDefaultPw()){tab('settings');toast('Please set your own password below before you do anything else.',true);var f=$('#pwform');f&&f.scrollIntoView()}}
+      else{var n=(t.n||0)+1,o={n:n};if(n>=5){o={n:0,until:now+30000}}try{localStorage.setItem('lc.try',JSON.stringify(o))}catch(e){}msg.textContent=n>=5?'Too many tries. Wait 30 seconds.':'That is not the password.'}
+    },function(){msg.textContent='This page needs a secure connection (https). Open it from the main website address.'});
   });
   $('#logout').addEventListener('click',function(){try{sessionStorage.removeItem('lc.auth')}catch(e){}location.reload()});
 
@@ -314,7 +320,13 @@
     if(a==='rm'){if(L.items({all:true,cat:cs[i].id}).length){toast('Move or delete its items first',true);return}if(!confirm('Delete category "'+cs[i].name+'"?'))return;cs.splice(i,1)}
     saved(L.saveCats(cs));renderCats();
   });
-  $('#pwform').addEventListener('submit',function(e){e.preventDefault();var f=e.target.elements;if(f.np.value!==f.np2.value){toast('Passwords do not match',true);return}L.hash(f.np.value).then(function(h){L.setPw(h);e.target.reset();toast('Password updated')})});
+  $('#pwform').addEventListener('submit',function(e){e.preventDefault();var f=e.target.elements;
+    if(f.np.value!==f.np2.value){toast('The new passwords do not match',true);return}
+    if(f.np.value.length<8){toast('Use at least 8 characters',true);return}
+    L.checkPw(f.cur.value).then(function(ok){
+      if(!ok){toast('Your current password is not right',true);return}
+      return L.setPw(f.np.value).then(function(done){if(done){e.target.reset();toast('Password updated')}else toast('Could not save. Free some browser space and try again.',true)})
+    },function(){toast('Needs a secure connection (https)',true)})});
 
   /* ---------- data ---------- */
   function renderData(){var kb=L.storageKB();$('#usage').textContent='Browser storage used: '+(kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB')+' of about 5 MB';$('#usagebar').style.width=Math.min(100,kb/5000*100)+'%'}
