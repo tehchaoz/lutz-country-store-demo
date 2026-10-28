@@ -109,6 +109,7 @@
     var root=$('#menu-root');if(!root)return;
     var q=($('#mq')&&$('#mq').value||'').trim().toLowerCase(),html='',nav='';
     L.cats().forEach(function(c){
+      if(!L.catShown(c.id))return;
       var its=L.items({cat:c.id}).filter(function(i){return !q||(i.name+' '+i.desc).toLowerCase().indexOf(q)>-1});
       if(!its.length)return;
       var mn=L.menuNote(c.menu||'all')||c.note||'';
@@ -117,7 +118,7 @@
     });
     root.innerHTML=html||'<div class="empty">'+barn+'<p>Nothing matches “'+esc(q)+'”.</p></div>';
     var cn=$('#catnav');if(cn){cn.innerHTML='<div class="wrap">'+nav+'</div><button type="button" class="cnb prev" aria-label="Scroll categories left" hidden>‹</button><button type="button" class="cnb next" aria-label="Scroll categories right">›</button>';navArrows(cn)}
-    var st=L.status(),cl=$('#closednote');if(cl){cl.hidden=true}
+    var st=L.status(),cl=$('#closednote');if(cl){var stn=L.status();cl.hidden=stn.open;cl.textContent=stn.open?'':'We are closed right now ('+stn.text.replace('Closed · ','')+'). This is the menu we will be serving when we open.'}
     spy();
   }
   function navArrows(cn){
@@ -181,11 +182,11 @@
   /* ---------- home featured ---------- */
   function renderFeatured(){
     var el=$('[data-featured]');if(!el)return;
-    var l=L.items().filter(function(i){return i.featured&&i.available});l=l.filter(function(i){return !L.itemBlock(i)}).concat(l.filter(function(i){return L.itemBlock(i)})).slice(0,4);if(!l.length)l=L.items().filter(function(i){return i.available}).slice(0,4);
+    var shown=function(i){return i.available&&L.catShown(i.cat)},l=L.items().filter(function(i){return i.featured&&shown(i)}).slice(0,4);if(!l.length)l=L.items().filter(shown).slice(0,4);
     el.innerHTML=l.map(function(it,i){
       return '<article class="dish rv'+(i?' d'+Math.min(i,3):'')+'">'+(it.badge?'<span class="badge">'+esc(it.badge)+'</span>':'')+(it.images&&it.images[0]?'<div class="photo"><img src="'+esc(it.images[0])+'" alt="'+esc(it.name)+'" loading="lazy"></div>':'')+
         '<span class="cat">'+esc(L.catName(it.cat))+'</span><h3>'+esc(it.name)+'</h3>'+(it.desc?'<p>'+esc(it.desc.length>100?it.desc.slice(0,97)+'…':it.desc)+'</p>':'<p></p>')+
-        '<div class="row"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(L.itemBlock(it)?'<span class="soldtxt">Not available now</span>':'<button class="btn mini" type="button" data-add="'+esc(it.id)+'">Add</button>')+'</div></article>'}).join('');
+        '<div class="row"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+'<a class="btn mini" href="'+ORDER_URL+'" target="_blank" rel="noopener">Order</a>'+'</div></article>'}).join('');
   }
 
   /* ---------- checkout ---------- */

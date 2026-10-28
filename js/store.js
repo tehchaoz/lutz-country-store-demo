@@ -169,6 +169,14 @@
       if(menu==='breakfast')return m<hhmm(s.breakfastEnd||'11:00');
       if(menu==='lunch')return (s.lunchDays||[1,2,4,5]).indexOf(dow)>-1&&m>=hhmm(s.lunchStart||'11:00');
       return true},
+    /* the moment whose menu the site should show: now while open, else the next opening */
+    menuTime:function(now){
+      now=now||new Date();var st=LC.status(now);if(st.open)return now;
+      var H=LC.hours(),m=now.getHours()*60+now.getMinutes();
+      for(var i=0;i<8;i++){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i),x=H[d.getDay()];if(!x||x.closed)continue;
+        if(i===0&&m>=hhmm(x.c))continue;var o=hhmm(x.o);if(i===0&&m>o)continue;d.setHours(Math.floor(o/60),o%60,0,0);return d}
+      return now},
+    catShown:function(catId,now){return LC.menuAt(LC.catMenu(catId),LC.menuTime(now))},
     menuNote:function(menu){var s=LC.settings(),D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       if(menu==='breakfast')return 'Breakfast · served until '+fmtT(hhmm(s.breakfastEnd||'11:00'));
       if(menu==='lunch')return 'Lunch · from '+fmtT(hhmm(s.lunchStart||'11:00'))+' · '+(s.lunchDays||[1,2,4,5]).map(function(i){return D[i]}).join(', ');
