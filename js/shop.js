@@ -5,7 +5,7 @@
   function $$(s,r){return [].slice.call((r||d).querySelectorAll(s))}
   var bag='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>';
   var barn='<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 28 L16 12 H48 L58 28 V58 H6Z" fill="#b3261e"/><path d="M6 28 L16 12 H48 L58 28" fill="none" stroke="#f7eed9" stroke-width="3" stroke-linejoin="round"/><rect x="20" y="30" width="24" height="28" fill="none" stroke="#f7eed9" stroke-width="3"/><path d="M20 30 L44 58 M44 30 L20 58" stroke="#f7eed9" stroke-width="3"/><rect x="28" y="17" width="8" height="7" fill="#f7eed9"/></svg>';
-  function fromTxt(it){return (it.groups||[]).some(function(g){return g.type==='single'&&g.required&&g.choices.some(function(c){return c.p>0})})?'<small style="font-size:.7em;opacity:.7">from </small>':''}
+  function fromTxt(it){return (it.groups||[]).some(function(g){return g.type==='single'&&g.required&&g.choices.some(function(c){return c.p>0})})?'<small class="from">from </small>':''}
 
   /* ---------- toast ---------- */
   var tt;function toast(html){var t=$('#toast');if(!t){t=d.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');d.body.appendChild(t)}t.innerHTML=html;t.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('on')},2400)}

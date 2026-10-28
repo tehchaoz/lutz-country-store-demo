@@ -417,3 +417,32 @@ html[data-theme=newyear] .loyalty{background:#1b2347}html[data-theme=july4] .loy
 
 .order-banner{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--cream,#fff6e2);border:2px solid var(--ink,#2b2118);border-radius:12px;padding:14px 18px;margin-bottom:22px}.order-banner p{margin:0;flex:1 1 260px}
 a.addb{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+
+/* phones: lift the smallest text to a readable size */
+@media (max-width:700px){
+body{font-size:18px}
+.brand small{font-size:.84rem;letter-spacing:.2em}
+.eyebrow{font-size:.9rem;letter-spacing:.16em}
+.open-badge{font-size:.88rem;letter-spacing:.06em}
+.btn.mini{font-size:.9rem}
+.dish .cat{font-size:.88rem;letter-spacing:.14em}
+.badge{font-size:.85rem}
+.review cite,.review p{font-size:1.05rem}.review cite{font-size:1rem}
+.hours li{font-size:1.02rem}
+.foot-grid h3{font-size:.9rem}.foot-grid a,.foot-grid li,.foot-brand p{font-size:1rem}
+.copy{font-size:.92rem}
+.catnav a{font-size:.92rem;padding:10px 16px}
+.mi p{font-size:1rem}.mi h3{font-size:1.1rem}
+.mi .tg{font-size:.88rem}
+.mi .soldtxt{font-size:.88rem}
+.price .from{font-size:.7em;opacity:.75}
+.cnote{font-size:.9rem;letter-spacing:.1em}
+.fine{font-size:.92rem}
+.fld,.grp legend{font-size:.86rem}.grp legend em{font-size:.8rem}
+.fld small{font-size:.88rem}
+.edate .m{font-size:.9rem}.edate .w{font-size:.85rem}
+.etag{font-size:.85rem}
+.ebody p{font-size:1.05rem}.ebody .etime{font-size:.98rem}.ebody .enote{font-size:.95rem}
+.order-banner p{font-size:1.02rem}
+}
+@media (max-width:700px){.price .from{font-size:.85rem;opacity:.8}}
