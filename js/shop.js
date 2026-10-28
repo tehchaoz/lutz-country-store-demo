@@ -98,11 +98,12 @@
   d.addEventListener('click',function(e){var c=e.target.closest('[data-custom]');if(c){e.preventDefault();var ci=L.item(c.dataset.custom),bl=ci&&L.itemBlock(ci);if(bl){toast(esc(bl));return}openItem(c.dataset.custom)}});
 
   /* ---------- menu page ---------- */
+  var ORDER_URL='https://order.toasttab.com/online/lutz-country-store-19015-us-41';
   function row(it){
-    var thumb=it.images&&it.images[0],soldout=!it.available,blk=soldout?'':L.itemBlock(it),out=soldout||!!blk;
-    return '<div class="mi'+(thumb?' thumb':'')+(out?' out':'')+'">'+(thumb?'<div class="im"><img src="'+esc(thumb)+'" alt="" loading="lazy"></div>':'')+
-      '<div><h3>'+(soldout?esc(it.name):'<a href="#" data-custom="'+esc(it.id)+'" style="text-decoration:none">'+esc(it.name)+'</a>')+(it.badge?'<span class="tg">'+esc(it.badge)+'</span>':'')+'</h3>'+(it.desc?'<p>'+esc(it.desc)+'</p>':'')+'</div>'+
-      '<div class="buy"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(soldout?'<span class="soldtxt">Sold out today</span>':blk?'<span class="soldtxt">'+esc(blk.replace(/^We are closed right now\. .*$/,'Closed').replace(/^Online ordering is .*$/,'Not available'))+'</span>':'<button class="addb" type="button" data-add="'+esc(it.id)+'" aria-label="Add '+esc(it.name)+'">+</button>')+'</div></div>';
+    var thumb=it.images&&it.images[0],soldout=!it.available;
+    return '<div class="mi'+(thumb?' thumb':'')+(soldout?' out':'')+'">'+(thumb?'<div class="im"><img src="'+esc(thumb)+'" alt="" loading="lazy"></div>':'')+
+      '<div><h3>'+esc(it.name)+(it.badge?'<span class="tg">'+esc(it.badge)+'</span>':'')+'</h3>'+(it.desc?'<p>'+esc(it.desc)+'</p>':'')+'</div>'+
+      '<div class="buy"><span class="price">'+fromTxt(it)+m2(it.price)+'</span>'+(soldout?'<span class="soldtxt">Sold out today</span>':'<a class="addb" href="'+ORDER_URL+'" target="_blank" rel="noopener" aria-label="Order '+esc(it.name)+' on Toast">+</a>')+'</div></div>';
   }
   function renderMenu(){
     var root=$('#menu-root');if(!root)return;
@@ -116,7 +117,7 @@
     });
     root.innerHTML=html||'<div class="empty">'+barn+'<p>Nothing matches “'+esc(q)+'”.</p></div>';
     var cn=$('#catnav');if(cn){cn.innerHTML='<div class="wrap">'+nav+'</div><button type="button" class="cnb prev" aria-label="Scroll categories left" hidden>‹</button><button type="button" class="cnb next" aria-label="Scroll categories right">›</button>';navArrows(cn)}
-    var st=L.status(),cl=$('#closednote');if(cl){var os=L.orderState();cl.hidden=os.ok;cl.textContent=os.ok?'':os.text+' You can browse the menu in the meantime.'}
+    var st=L.status(),cl=$('#closednote');if(cl){cl.hidden=true}
     spy();
   }
   function navArrows(cn){
@@ -255,7 +256,7 @@
   var sig0=null;
   function sig(){var o=L.orderState();return [o.ok,L.menuAt('breakfast'),L.menuAt('lunch')].join()}
   setInterval(function(){var g=sig();if(sig0!==null&&g!==sig0){renderMenu();renderFeatured();renderCart()}sig0=g},30000);sig0=sig();
-  mountCart();renderMenu();renderFeatured();renderEvents();renderGallery();renderAbout();renderCheckout();renderCart();
+  renderMenu();renderFeatured();renderEvents();renderGallery();renderAbout();renderCheckout();renderCart();
   ['cart','items','settings'].forEach(function(n){d.addEventListener('lc:'+n,renderCart)});
   addEventListener('storage',function(){renderCart();renderMenu();renderFeatured();renderEvents();renderGallery();renderAbout()});
   if(location.hash==='#cart')openCart();

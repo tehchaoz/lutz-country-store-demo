@@ -414,3 +414,6 @@ html[data-theme=newyear] .loyalty{background:#1b2347}html[data-theme=july4] .loy
 .rail.stop .station{right:auto;left:calc(var(--stop) - 15px)}
 @media (max-width:700px){.rail.stop .train{width:min(520px,92vw)}}
 @media (prefers-reduced-motion:reduce){.rail.stop .train{transform:translateX(calc(var(--stop) - 100%))}}
+
+.order-banner{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--cream,#fff6e2);border:2px solid var(--ink,#2b2118);border-radius:12px;padding:14px 18px;margin-bottom:22px}.order-banner p{margin:0;flex:1 1 260px}
+a.addb{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
