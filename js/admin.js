@@ -26,6 +26,7 @@
 
   /* ---------- tabs ---------- */
   function tab(n){
+    if(n!=='settings'&&L.isDefaultPw()){n='settings';toast('Set your own password first. The starting password is in the public code.',true)}
     $$('.a-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===n)});
     $$('.a-pane').forEach(function(p){p.hidden=p.id!=='tab-'+n});
     ({events:renderEvents,photos:renderPhotos,site:renderSite,orders:renderOrders,reports:renderReports,settings:renderSettings,data:renderData,menu:renderMenu})[n]();
@@ -323,6 +324,7 @@
   $('#pwform').addEventListener('submit',function(e){e.preventDefault();var f=e.target.elements;
     if(f.np.value!==f.np2.value){toast('The new passwords do not match',true);return}
     if(f.np.value.length<8){toast('Use at least 8 characters',true);return}
+    if(f.np.value===f.cur.value){toast('Pick a new password that is different from the current one',true);return}
     L.checkPw(f.cur.value).then(function(ok){
       if(!ok){toast('Your current password is not right',true);return}
       return L.setPw(f.np.value).then(function(done){if(done){e.target.reset();toast('Password updated')}else toast('Could not save. Free some browser space and try again.',true)})
